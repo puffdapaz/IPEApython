@@ -2,6 +2,8 @@
 
 ## Impacto da receita tributária no desenvolvimento econômico e social: um estudo nos municípios brasileiros
 
+[**Artigo Integral**](https://1drv.ms/b/s!AoliJtQbDgVnj3TF88adzhkJfaMa?e=FMAkgz)
+
 - Municípios Brasileiros com mais de 100.000 habitantes em 2010 (diante do alto índice de informações faltantes em delimitação mais ampla);
 - IDHM 2010;
 - População 2010;
