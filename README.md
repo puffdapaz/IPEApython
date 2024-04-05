@@ -26,6 +26,7 @@
 ## Incrementos
 
 - Expandir estudo para todos os municípios possíveis;
+- Refazer estudo com valores censitarios (2022) atualizados;
 - Oter dados via API;
 - Incluir painel/visuais;
 - Documentar e publicar.
