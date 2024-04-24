@@ -127,23 +127,21 @@ namefile_População = 'População_2010.csv'
 path_População = folder_bronze + '\\' + namefile_População
 raw_População.to_csv(path_População, index=False)
 
-# Ativa a conversão de objetos R em data frames do pandas
+# Conversão de RObjects em pandas DF
 pandas2ri.activate()
 
-# Código R: ipeadatar
+# Coleta ipeadatar
 r_code = """
-# Instalando pacote
-# install.packages('ipeadatar')
+install.packages('ipeadatar')
 
-# Carregando pacote
 library(ipeadatar)
 
-# Coletando dados IDHM
+# Dados IDHM
 data_IDHM <- ipeadatar::ipeadata(code = 'ADH_IDHM')
 data_IDHM
 """
 
-# Executa o código R
+# Executa R
 data_IDHM = robjects.r(r_code)
 
 with (robjects.default_converter + pandas2ri.converter).context():
@@ -153,3 +151,59 @@ namefile_IDHM = 'IDHM_2010.csv'
 path_IDHM = folder_bronze + '\\' + namefile_IDHM
 raw_IDHM.to_csv(path_IDHM, index=False)
 #%%
+import ipeadatapy as ipea
+import rpy2.robjects as robjects
+from rpy2.robjects import pandas2ri
+import os as os
+import pandas as pd
+
+bronze = 'bronze'
+silver = 'silver'
+gold = 'gold'
+
+# Creating folders (if don't exist)
+for folder in [bronze, silver, gold]:
+    os.makedirs(folder, exist_ok=True)
+
+data_PIB = ipea.timeseries(series = 'PIB_IBGE_5938_37', year = 2010)
+raw_PIB = pd.DataFrame(data_PIB)
+namefile_PIB = 'PIB_2010.csv'
+path_PIB = os.path.join(bronze, namefile_PIB)
+raw_PIB.to_csv(path_PIB, index=False)
+
+data_Arrecadação = ipea.timeseries(series = 'RECORRM', year = 2010)
+raw_Arrecadação = pd.DataFrame(data_Arrecadação)
+namefile_Arrecadação = 'Arrecadação_2010.csv'
+path_Arrecadação = os.path.join(bronze, namefile_Arrecadação)
+raw_Arrecadação.to_csv(path_Arrecadação, index=False)
+
+data_População = ipea.timeseries(series = 'POPTOT', year = 2010)
+raw_População = pd.DataFrame(data_População)
+namefile_População = 'População_2010.csv'
+path_População = os.path.join(bronze, namefile_População)
+raw_População.to_csv(path_População, index=False)
+
+# Conversão de RObjects em pandas DF
+pandas2ri.activate()
+
+# Coleta ipeadatar
+r_code = """
+install.packages('ipeadatar')
+
+library(ipeadatar)
+
+# Dados IDHM
+data_IDHM <- ipeadatar::ipeadata(code = 'ADH_IDHM')
+data_IDHM
+"""
+
+# Executa R
+data_IDHM = robjects.r(r_code)
+
+with (robjects.default_converter + pandas2ri.converter).context():
+  raw_IDHM = robjects.conversion.get_conversion().rpy2py(data_IDHM)
+raw_IDHM = pd.DataFrame(raw_IDHM)
+namefile_IDHM = 'IDHM_2010.csv'
+path_IDHM = os.path.join(bronze, namefile_IDHM)
+raw_IDHM.to_csv(path_IDHM, index=False)
+# %%
