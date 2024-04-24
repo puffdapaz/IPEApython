@@ -1,7 +1,10 @@
 #%% 
 
 # Fluxograma ilustrativo para a coleta dos dados IPEA: https://github.com/abraji/APIs/blob/f595f40a5952555e23422847b4f726bcec42cbc5/ipeadata/fluxogram.png
+# Bibliotecas
 import ipeadatapy as ipea
+import rpy2.robjects as robjects
+from rpy2.robjects import pandas2ri
 import pandas as pd
 
 ipea.list_series() # Obtenção de informações sobre as séries e IDs;
@@ -28,6 +31,8 @@ ipea.timeseries(series = 'PIB_IBGE_5938_37'
             )
 # %%
 import ipeadatapy as ipea
+import rpy2.robjects as robjects
+from rpy2.robjects import pandas2ri
 import pandas as pd
 
 data_PIB = ipea.timeseries(series = 'PIB_IBGE_5938_37', year = 2010)
@@ -39,8 +44,30 @@ raw_Arrecadação = pd.DataFrame(data_Arrecadação)
 data_População = ipea.timeseries(series = 'POPTOT', year = 2010)
 raw_População = pd.DataFrame(data_População)
 
-data_IDHM = ipea.timeseries(series = 'ADH_IDHM', year = 2010)
-raw_IDHM = pd.DataFrame(data_IDHM)
+# Ativa a conversão de objetos R em data frames do pandas
+pandas2ri.activate()
+
+# Código R: ipeadatar
+r_code = """
+# Instalando pacote 'ipeadatar' - não é necessário executar dentro do R code
+# install.packages('ipeadatar')
+
+# Carregando pacote 'ipeadatar'
+library(ipeadatar)
+
+# Recuperando dados via API
+data_IDHM <- ipeadatar::ipeadata(code = 'ADH_IDHM')
+
+# Retornando os dados
+data_IDHM
+"""
+
+# Executa o código R
+data_IDHM = robjects.r(r_code)
+
+with (robjects.default_converter + pandas2ri.converter).context():
+  raw_IDHM = robjects.conversion.get_conversion().rpy2py(data_IDHM)
+  raw_IDHM = pd.DataFrame(raw_IDHM)
 
 df_PopPIB = df_População.merge(df_PIB,
                    how='left',
@@ -71,6 +98,58 @@ bronze_População = pd.DataFrame(raw_População) \
     .rename(columns={'TERCODIGO'          : 'CodMunIBGE'
                    , 'VALUE (Habitante)'  : 'População'})
 bronze_População
-# %%
 
 # %%
+import ipeadatapy as ipea
+import rpy2.robjects as robjects
+from rpy2.robjects import pandas2ri
+import pandas as pd
+
+folder_bronze = r'C:\Users\puffd\Desktop\python2024\TCC\bronze'
+folder_silver = r'C:\Users\puffd\Desktop\python2024\TCC\silver'
+folder_gold = r'C:\Users\puffd\Desktop\python2024\TCC\gold'
+
+data_PIB = ipea.timeseries(series = 'PIB_IBGE_5938_37', year = 2010)
+raw_PIB = pd.DataFrame(data_PIB)
+namefile_PIB = 'PIB_2010.csv'
+path_PIB = folder_bronze + '\\' + namefile_PIB
+raw_PIB.to_csv(path_PIB, index=False)
+
+data_Arrecadação = ipea.timeseries(series = 'RECORRM', year = 2010)
+raw_Arrecadação = pd.DataFrame(data_Arrecadação)
+namefile_Arrecadação = 'Arrecadação_2010.csv'
+path_Arrecadação = folder_bronze + '\\' + namefile_Arrecadação
+raw_Arrecadação.to_csv(path_Arrecadação, index=False)
+
+data_População = ipea.timeseries(series = 'POPTOT', year = 2010)
+raw_População = pd.DataFrame(data_População)
+namefile_População = 'População_2010.csv'
+path_População = folder_bronze + '\\' + namefile_População
+raw_População.to_csv(path_População, index=False)
+
+# Ativa a conversão de objetos R em data frames do pandas
+pandas2ri.activate()
+
+# Código R: ipeadatar
+r_code = """
+# Instalando pacote
+# install.packages('ipeadatar')
+
+# Carregando pacote
+library(ipeadatar)
+
+# Coletando dados IDHM
+data_IDHM <- ipeadatar::ipeadata(code = 'ADH_IDHM')
+data_IDHM
+"""
+
+# Executa o código R
+data_IDHM = robjects.r(r_code)
+
+with (robjects.default_converter + pandas2ri.converter).context():
+  raw_IDHM = robjects.conversion.get_conversion().rpy2py(data_IDHM)
+raw_IDHM = pd.DataFrame(raw_IDHM)
+namefile_IDHM = 'IDHM_2010.csv'
+path_IDHM = folder_bronze + '\\' + namefile_IDHM
+raw_IDHM.to_csv(path_IDHM, index=False)
+#%%
