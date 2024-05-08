@@ -49,7 +49,7 @@ data_PIB = ipea.timeseries(series = 'PIB_IBGE_5938_37', year = 2010)
 raw_PIB = pd.DataFrame(data_PIB)
 namefile_PIB = 'PIB_2010.csv'
 path_PIB = os.path.join(bronze, namefile_PIB)
-raw_PIB.to_csv(path_PIB, index=False)
+raw_PIB.to_csv(path_PIB, index=False, encoding='utf-8')
 
 silver_PIB = pd.DataFrame(raw_PIB) \
     .query('NIVNOME == "Municípios"') \
@@ -57,18 +57,20 @@ silver_PIB = pd.DataFrame(raw_PIB) \
                  , 'RAW DATE'
                  , 'YEAR'
                  , 'NIVNOME']) \
-    .astype({'VALUE (R$ (mil), a preços do ano 2010)': int}, errors='ignore') \
-    .rename(columns={'TERCODIGO' : 'CodMunIBGE'
-                   , 'VALUE (R$ (mil), a preços do ano 2010)'  : 'PIB (mil R$), a preços de 2010'}) \
+        .rename(columns={'TERCODIGO' : 'CodMunIBGE'
+                   , 'VALUE (R$ (mil), a preços do ano 2010)'  : 'PIB 2010 (R$)'}) \
+        .astype({'PIB 2010 (R$)': float, 'CodMunIBGE': str}, errors='ignore') \
     .drop_duplicates(subset=['CodMunIBGE'])
+silver_PIB['PIB 2010 (R$)'] = silver_PIB['PIB 2010 (R$)'].round(2)
+silver_PIB['PIB 2010 (R$)'] = silver_PIB['PIB 2010 (R$)']* 1000
 path_PIB = os.path.join(silver, namefile_PIB)
-silver_PIB.to_csv(path_PIB, index=False)
+silver_PIB.to_csv(path_PIB, index=False, encoding='utf-8')
 
 data_Arrecadação = ipea.timeseries(series = 'RECORRM', year = 2010)
 raw_Arrecadação = pd.DataFrame(data_Arrecadação)
 namefile_Arrecadação = 'Arrecadação_2010.csv'
 path_Arrecadação = os.path.join(bronze, namefile_Arrecadação)
-raw_Arrecadação.to_csv(path_Arrecadação, index=False)
+raw_Arrecadação.to_csv(path_Arrecadação, index=False, encoding='utf-8')
 
 silver_Arrecadação = pd.DataFrame(raw_Arrecadação) \
     .query('NIVNOME == "Municípios"') \
@@ -76,18 +78,18 @@ silver_Arrecadação = pd.DataFrame(raw_Arrecadação) \
                  , 'RAW DATE'
                  , 'YEAR'
                  , 'NIVNOME']) \
-    .astype({'VALUE (R$)': int}, errors='ignore') \
     .rename(columns={'TERCODIGO' : 'CodMunIBGE'
-                   , 'VALUE (R$ (mil), a preços do ano 2010)'  : 'Receitas Correntes 2010(R$)'}) \
+                   , 'VALUE (R$)'  : 'Receitas Correntes 2010 (R$)'}) \
+    .astype({'Receitas Correntes 2010 (R$)': float, 'CodMunIBGE': str}, errors='ignore') \
     .drop_duplicates(subset=['CodMunIBGE'])
 path_Arrecadação = os.path.join(silver, namefile_Arrecadação)
-silver_Arrecadação.to_csv(path_Arrecadação, index=False)
+silver_Arrecadação.to_csv(path_Arrecadação, index=False, encoding='utf-8')
 
 data_População = ipea.timeseries(series = 'POPTOT', year = 2010)
 raw_População = pd.DataFrame(data_População)
 namefile_População = 'População_2010.csv'
 path_População = os.path.join(bronze, namefile_População)
-raw_População.to_csv(path_População, index=False)
+raw_População.to_csv(path_População, index=False, encoding='utf-8')
 
 silver_População = pd.DataFrame(raw_População) \
     .query('NIVNOME == "Municípios"') \
@@ -95,12 +97,12 @@ silver_População = pd.DataFrame(raw_População) \
                  , 'RAW DATE'
                  , 'YEAR'
                  , 'NIVNOME']) \
-    .astype({'VALUE (Habitante)': int}, errors='ignore') \
     .rename(columns={'TERCODIGO' : 'CodMunIBGE'
                    , 'VALUE (Habitante)'  : 'Habitantes 2010'}) \
+    .astype({'Habitantes 2010': int, 'CodMunIBGE': str}, errors='ignore') \
     .drop_duplicates(subset=['CodMunIBGE'])
 path_População = os.path.join(silver, namefile_População)
-silver_População.to_csv(path_População, index=False)
+silver_População.to_csv(path_População, index=False, encoding='utf-8')
 
 # Conversão de RObjects em pandas DF
 pandas2ri.activate()
@@ -126,23 +128,62 @@ if 'date' in raw_IDHM.columns and raw_IDHM['date'].dtype == 'float64':
 raw_IDHM = pd.DataFrame(raw_IDHM)
 namefile_IDHM = 'IDHM_2010.csv'
 path_IDHM = os.path.join(bronze, namefile_IDHM)
-raw_IDHM.to_csv(path_IDHM, index=False)
+raw_IDHM.to_csv(path_IDHM, index=False, encoding='utf-8')
 
 silver_IDHM = pd.DataFrame(raw_IDHM) \
     .query('uname == "Municipality" and date == "2010-01-01"') \
     .drop(columns=['code'
-                 , 'uname']) \
-    .astype({'value': float}, errors='ignore') \
+                 , 'uname'
+                 , 'date']) \
     .rename(columns={'tcode' : 'CodMunIBGE'
                    , 'value'  : 'IDHM 2010'}) \
+    .astype({'IDHM 2010': float, 'CodMunIBGE': str}, errors='ignore') \
     .drop_duplicates(subset=['CodMunIBGE'])
 path_IDHM = os.path.join(silver, namefile_IDHM)
-silver_IDHM.to_csv(path_IDHM, index=False)
-# %%
+silver_IDHM.to_csv(path_IDHM, index=False, encoding='utf-8')
 
-df_PopPIB = df_População.merge(df_PIB,
+
+data_Municípios = ipea.territories()
+raw_Municípios = pd.DataFrame(data_Municípios)
+namefile_Municípios = 'Municípios.csv'
+path_Municípios = os.path.join(bronze, namefile_Municípios)
+raw_Municípios.to_csv(path_Municípios, index=False, encoding='utf-8')
+
+silver_Municípios = pd.DataFrame(raw_Municípios) \
+    .query('LEVEL == "Municípios"') \
+    .drop(columns=['LEVEL'
+               ,   'AREA'
+               ,   'CAPITAL']) \
+    .rename(columns={'NAME' : 'Município'
+                   , 'ID'  : 'CodMunIBGE'}) \
+    .drop_duplicates(subset=['CodMunIBGE'])
+path_Municípios = os.path.join(silver, namefile_Municípios)
+silver_Municípios.to_csv(path_Municípios, index=False, encoding='utf-8')
+
+df_PopPIB = silver_População.merge(silver_PIB,
                    how='left',
-                   left_on=['TERCODIGO'],
-                   right_on=['TERCODIGO'],                   
+                   left_on=['CodMunIBGE'],
+                   right_on=['CodMunIBGE'],                   
                    )
-df_PopPIB
+
+df_PopPIBArrec = df_PopPIB.merge(silver_Arrecadação,
+                                 how='left',
+                                 left_on=['CodMunIBGE'],
+                                 right_on=['CodMunIBGE'],
+                                 )
+
+df_Variables = df_PopPIBArrec.merge(silver_IDHM,
+                                   how='left',
+                                   left_on=['CodMunIBGE'],
+                                   right_on=['CodMunIBGE'],
+                                   )
+
+df_Complete = df_Variables.merge(silver_Municípios,
+                                   how='left',
+                                   left_on=['CodMunIBGE'],
+                                   right_on=['CodMunIBGE'],
+                                   )
+
+df_Complete
+
+# %%
