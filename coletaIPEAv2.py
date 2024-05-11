@@ -107,14 +107,33 @@ def silver_transform(df: pd.DataFrame
 
 # Gold finish function to merge/join variables values into a single dataframe
 def gold_finish(silver_dataframes: List[pd.DataFrame]
-              , folder: str
-              , filename: str) -> pd.DataFrame:
+            , folder: str
+            , filename: str) -> pd.DataFrame:
     merged_df = silver_dataframes[0]
     for df in silver_dataframes[1:]:
         df['CodMunIBGE'] = df['CodMunIBGE'].astype(str)
         merged_df = merged_df.merge(df
-                                  , how='left'
-                                  , on='CodMunIBGE')
+                                , how='left'
+                                , on='CodMunIBGE')
+    
+    # Define the new column order
+    column_order = ['CodMunIBGE'
+                  , 'Município'
+                  , 'Habitantes 2010'
+                  , 'IDHM 2010'
+                  , 'PIB 2010 (R$)'
+                  , 'Receitas Correntes 2010 (R$)']
+    
+    # Removing rows with NA fields
+    merged_df.dropna(inplace=True)
+    
+    # Reorder the columns
+    merged_df = merged_df.reindex(columns=column_order)
+
+    # Sorting rows
+    merged_df.sort_values(by='CodMunIBGE'
+                        , inplace=True)
+    
     # Save DataFrame as CSV file
     saving_step(merged_df
               , folder
