@@ -35,3 +35,35 @@ Por Município em 2010: http://www.ipeadata.gov.br/api/odata4/.
 - [IDH e População](https://basedosdados.org/dataset/cbfc7253-089b-44e2-8825-755e1419efc8?table=ec5fb3d1-fa98-4ab3-8a02-4b9950048a83);
 - [PIB]();
 - [Arrecadação]().
+
+#%% 
+
+# Fluxograma ilustrativo para a coleta dos dados IPEA: https://github.com/abraji/APIs/blob/f595f40a5952555e23422847b4f726bcec42cbc5/ipeadata/fluxogram.png
+# Bibliotecas
+import ipeadatapy as ipea
+import rpy2.robjects as robjects
+from rpy2.robjects import pandas2ri
+import pandas as pd
+
+ipea.list_series() # Obtenção de informações sobre as séries e IDs;
+ipea.themes() # Lista de temas para argumentos/filtros;
+ipea.sources() # Lista de fontes para argumentos/filtros;
+ipea.territories() # Lista de níveis geográficos para argumentos/filtros;
+ipea.describe() # Informações sobre os metadados da série;
+ipea.metadata() # Função de Busca com base em argumentos/colunas da série;
+ipea.timeseries() # Função (que também utiliza argumentos *plot()) aplicada em conjunto com o código da série para obter dia, mês e ano de cada observação, além do valor da série;
+
+'''
+Silver Steps
+Filtros de Municípios em Nível Geográfico;
+Remoção de Colunas sem uso;
+Remoção de Duplicidades;
+Conversoes de formato;
+Rotulação de Colunas.
+'''
+
+import ipeadatapy as ipea
+ipea.list_series('PIB Municipal - preços de mercado') # PIB_IBGE_5938_37
+ipea.list_series('Receita corrente - receita bruta - municipal') # RECORRM
+ipea.list_series('Índice de Desenvolvimento Humano Municipal') # ADH_IDHM * Obtido em pacote do R (Nao Ha valores municipais de IDH em 2010 na biblioteca ipeadatapy)
+ipea.list_series('População residente - total') # POPTOT

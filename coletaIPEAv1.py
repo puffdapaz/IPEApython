@@ -1,34 +1,3 @@
-#%% 
-
-# Fluxograma ilustrativo para a coleta dos dados IPEA: https://github.com/abraji/APIs/blob/f595f40a5952555e23422847b4f726bcec42cbc5/ipeadata/fluxogram.png
-# Bibliotecas
-import ipeadatapy as ipea
-import rpy2.robjects as robjects
-from rpy2.robjects import pandas2ri
-import pandas as pd
-
-ipea.list_series() # Obtenção de informações sobre as séries e IDs;
-ipea.themes() # Lista de temas para argumentos/filtros;
-ipea.sources() # Lista de fontes para argumentos/filtros;
-ipea.territories() # Lista de níveis geográficos para argumentos/filtros;
-ipea.describe() # Informações sobre os metadados da série;
-ipea.metadata() # Função de Busca com base em argumentos/colunas da série;
-ipea.timeseries() # Função (que também utiliza argumentos *plot()) aplicada em conjunto com o código da série para obter dia, mês e ano de cada observação, além do valor da série;
-
-'''
-Silver Steps
-Filtros de Municípios em Nível Geográfico;
-Remoção de Colunas sem uso;
-Remoção de Duplicidades;
-Conversoes de formato;
-Rotulação de Colunas.
-'''
-
-import ipeadatapy as ipea
-ipea.list_series('PIB Municipal - preços de mercado') # PIB_IBGE_5938_37
-ipea.list_series('Receita corrente - receita bruta - municipal') # RECORRM
-ipea.list_series('Índice de Desenvolvimento Humano Municipal') # ADH_IDHM * Obtido em pacote do R (Nao Ha valores municipais de IDH em 2010 na biblioteca ipeadatapy)
-ipea.list_series('População residente - total') # POPTOT
 #%%
 import ipeadatapy as ipea
 import rpy2.robjects as robjects
@@ -61,7 +30,7 @@ silver_PIB = pd.DataFrame(raw_PIB) \
                    , 'VALUE (R$ (mil), a preços do ano 2010)'  : 'PIB 2010 (R$)'}) \
         .astype({'PIB 2010 (R$)': float, 'CodMunIBGE': str}, errors='ignore') \
     .drop_duplicates(subset=['CodMunIBGE'])
-silver_PIB['PIB 2010 (R$)'] = silver_PIB['PIB 2010 (R$)'].round(2)
+silver_PIB['PIB 2010 (R$)'] = silver_PIB['PIB 2010 (R$)'].round(3)
 silver_PIB['PIB 2010 (R$)'] = silver_PIB['PIB 2010 (R$)']* 1000
 path_PIB = os.path.join(silver, namefile_PIB)
 silver_PIB.to_csv(path_PIB, index=False, encoding='utf-8')
@@ -109,7 +78,7 @@ pandas2ri.activate()
 
 # Coleta ipeadatar
 r_code = """
-install.packages('ipeadatar')
+install.packages('ipeadatar', repos='http://cran.r-project.org')
 
 library(ipeadatar)
 
@@ -184,6 +153,13 @@ df_Complete = df_Variables.merge(silver_Municípios,
                                    right_on=['CodMunIBGE'],
                                    )
 
-df_Complete
+df_Complete.dropna(inplace=True)
+df_Complete = df_Complete.reindex(columns=['CodMunIBGE', 'Município', 'Habitantes 2010', 'IDHM 2010', 'PIB 2010 (R$)', 'Receitas Correntes 2010 (R$)', 'Carga Tributária'])
+df_Complete.sort_values(by='CodMunIBGE', inplace=True)
+df_Complete['Carga Tributária'] = df_Complete['Receitas Correntes 2010 (R$)'] / df_Complete['PIB 2010 (R$)'].astype(float)
 
+namefile_clean_data = 'CleanData.csv'
+path_clean_data = os.path.join(gold, namefile_clean_data)
+df_Complete.to_csv(path_clean_data, index=False, encoding='utf-8')
+df_Complete
 # %%

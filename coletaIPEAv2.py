@@ -94,7 +94,10 @@ def silver_transform(df: pd.DataFrame
                                       , 'VALUE (R$)': 'Receitas Correntes 2010 (R$)'})
             elif 'População_2010.csv' in filename:
                 df = df.rename(columns={'TERCODIGO': 'CodMunIBGE'
-                                      , 'VALUE (Habitante)': 'Habitantes 2010'})
+                                      , 'VALUE (Habitante)': 'Habitantes 2010'}) \
+                       .astype({'Habitantes 2010': int
+                              , 'CodMunIBGE': str}
+                              , errors='ignore')
         
         # Save DataFrame as CSV file
         saving_step(df
@@ -122,7 +125,8 @@ def gold_finish(silver_dataframes: List[pd.DataFrame]
                   , 'Habitantes 2010'
                   , 'IDHM 2010'
                   , 'PIB 2010 (R$)'
-                  , 'Receitas Correntes 2010 (R$)']
+                  , 'Receitas Correntes 2010 (R$)'
+                  , 'Carga Tributária']
     
     # Removing rows with NA fields
     merged_df.dropna(inplace=True)
@@ -134,6 +138,9 @@ def gold_finish(silver_dataframes: List[pd.DataFrame]
     merged_df.sort_values(by='CodMunIBGE'
                         , inplace=True)
     
+    # Creating new column
+    merged_df['Carga Tributária'] = merged_df['Receitas Correntes 2010 (R$)'] / merged_df['PIB 2010 (R$)'].astype(float)
+
     # Save DataFrame as CSV file
     saving_step(merged_df
               , folder
@@ -208,7 +215,7 @@ def main():
         clean_data = gold_finish(join_list
                                , config['gold']
                                , 'CleanData.csv')
-    print(clean_data)
+    clean_data
     
 # Execute
 if __name__ == "__main__":
