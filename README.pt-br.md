@@ -1,4 +1,4 @@
-# Coleta e Tratamento de dados públicos do IPEA utilizando python: Refazendo o projeto de Artigo Científico de Graduação
+# Coleta e Tratamento de dados públicos do IPEA utilizando python: Refazendo projeto de Artigo Científico
 
 [![en-us](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/puffdapaz/pythonIPEA/blob/main/README.en_us.md)
 
@@ -18,7 +18,7 @@
 - Documentar e publicar.
 
 ## O Projeto
-O intuito do projeto é aprender e aperfeiçoar a utilização de python para engenharia, análise e ciência de dados através de uma pesquisa realizada em 2015 em artigo científico para graduação, como referência.
+O intuito do projeto é aprender e aperfeiçoar a utilização de python para engenharia, análise e ciência de dados através de uma pesquisa realizada em 2015 em artigo científico, como referência.
 
 Além de explorar boas práticas em python, o propósito é de aplicar conceitos de Arquitetura Medallion, programação orientada a objetos e ETL, utilizando dados públicos sociais dos municípios brasileiros. Este repositório conta ainda com três versões de código que executam o mesmo processo, com incremento em sofisticação a cada versão.
 

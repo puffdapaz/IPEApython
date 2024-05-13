@@ -1,4 +1,4 @@
-# Collection and Process of IPEA public data using Python: Redoing the Undergraduate Scientific Article project
+# Collection and Process of IPEA public data using python: Redoing a Scientific Article project
 
 [![pt-br](https://img.shields.io/badge/lang-pt--br-green.svg)](https://github.com/puffdapaz/pythonIPEA/blob/main/README.pt-br.md)
 
