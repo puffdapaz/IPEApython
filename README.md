@@ -1,21 +1,47 @@
-# Refazendo o projeto de Artigo (TCC Graduação): Obtenção, Manipulação e Análise dos dados utilizando python
+# Coleta e Tratamento de dados públicos do IPEA utilizando python: Refazendo o projeto de Artigo Científico de Graduação
+
 [Artigo Integral](https://github.com/puffdapaz/TCC/blob/66a3e445755dc30225056ef4bb92fabd85f85d14/Impacto%20da%20receita%20tribut%C3%A1ria%20no%20desenvolvimento%20econ%C3%B4mico%20e%20social.%20um%20estudo%20nos%20munic%C3%ADpios%20brasileiros.pdf)
 
 ## Impacto da receita tributária no desenvolvimento econômico e social: um estudo nos municípios brasileiros
-- Municípios Brasileiros com mais de 100.000 habitantes em 2010 (diante do alto índice de informações faltantes em delimitação mais ampla);
 - IDHM 2010;
-- População 2010;
-- Arrecadação Municipal 2010;
+- Receitas Correntes 2010;
 - Produto Interno Bruto Municipal 2010;
-- Arrecadação 2010 / PIB 2010 = Carga Tributária 2010;
-- PIB 2010 / População 2010 = PIB per capita 2010;
+- Receitas Correntes 2010 / PIB 2010 = Carga Tributária 2010.
+
+### [Fonte dos Dados](http://www.ipeadata.gov.br/Default.aspx)
 
 ### Incrementos
-- Expandir estudo para todos os municípios possíveis;
-- Refazer estudo com valores censitarios (2022) atualizados;
-- Oter dados via API;
-- Incluir painel/visuais;
-- Documentar e publicar.
+- Expandir estudo para todos os municípios possíveis; - [x]
+- Incluir painel/visuais; - [ ]
+- Documentar e publicar. - [x]
+
+## O Projeto
+O intuito do projeto é aprender e aperfeiçoar a utilização de python para engenharia, análise e ciência de dados através de uma pesquisa realizada em 2015 em artigo científico para graduação, como referência.
+
+Além de explorar boas práticas em python, o propósito é de aplicar conceitos de Arquitetura Medallion, programação orientada a objetos e ETL, utilizando dados públicos sociais dos municípios brasileiros. Este repositório conta ainda com três versões de código que executam o mesmo processo, com incremento em sofisticação a cada versão.
+
+## O Código
+As três versões de script, executam o mesmo processo gerando o mesmo resultado.
+A primeira contém uma abordagem inicial de python, a segunda se vale de mais recursos da ferramenta, e a terceira tem a intenção de incorporar as melhores práticas quanto à construção de código.
+
+1. O fluxo inicia com a criação de diretórios que emulam as camadas de arquitetura Medallion - Bronze, Silver e Gold - incrementando progressivamente a estrutura e qualidade dos dados salvos.
+2. Nesta análise cinco séries de dados são buscadas, já filtradas pelo ano de 2010, na base de dados do IPEAdata (base pública de dados do Instituto de Pesquisa Econômica Aplicada, fundação pública federal vinculada ao Ministério do Planejamento e Orçamento, do Brasil):
+    - Quatro delas oriundas da biblioteca python ['ipeadatapy'](https://pypi.org/project/ipeadatapy/)
+        Três das listas de séries disponíveis:
+            PIB;
+            População; (Era critério de filtro da amostra no projeto original)
+            Receitas Correntes;
+        Uma da lista de territórios:
+            Municípios.
+    - Uma delas oriunda do pacote R ['ipeadatar'](https://cran.r-project.org/web/packages/ipeadatar/index.html) por nao estar disponível em granularidade municipal na biblioteca python.
+        IDHM.
+As séries obtidas são salvas como DataFrame em sua estrutura original/integral na camada Bronze.
+\* A série IDHM tem uma conversão de campo de data para filtro do ano de 2010, por estrutura de busca diferente da biblioteca python.
+3. Os DataFrames passam por processo de transformação, filtrando somente as ocorrências por município, efetuando conversões de DataType, renomeação de campos e remoção de campos não utilizados e eventual duplicidade de ocorrências. 
+Os DataFrames transformados são salvos na camada Silver.
+4. Nessa etapa, consolidam-se os dados das variáveis préviamente tratadas em um único Dataframe reunindo (através do Código de Município estabelecido pelo [IBGE - Instituto Brasileiro de Geografia e Estatística](https://servicodados.ibge.gov.br/api/docs/)) os nomes dos municípios e as demais variáveis selecionadas.
+Na sequência, há a remoção de ocorrências que nao contenham todas as variáveis, reordenação dos campos, reordenação das ocorrências (com base nos Códigos de Município, de forma crescente) e a criação de uma coluna calculada de 'Carga Tributária' composta pela relação entre as Receitas Correntes e PIB municipais.
+O DataFrame em condições para a análise é salvo na camada Gold.
 
 ## Métodos
 ### Model Summary (R, R², Adjusted R², Std error Estimate, Durbin-Watson)
@@ -28,42 +54,3 @@
 - *Predictors: (Constant), Carga Tributária, Arrecadação 2010;*
 - *Predictors: (Constant), Carga Tributária, Arrecadação 2010, PIB 2010;*
 - *Dependent Variable: IDHM 2010.*
-
-## Fontes de Arquivos
-Por Município em 2010: http://www.ipeadata.gov.br/api/odata4/.
-- [Código IBGE x Nome Município](https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/2022/DTB_2022.zip);
-- [IDH e População](https://basedosdados.org/dataset/cbfc7253-089b-44e2-8825-755e1419efc8?table=ec5fb3d1-fa98-4ab3-8a02-4b9950048a83);
-- [PIB]();
-- [Arrecadação]().
-
-#%% 
-
-# Fluxograma ilustrativo para a coleta dos dados IPEA: https://github.com/abraji/APIs/blob/f595f40a5952555e23422847b4f726bcec42cbc5/ipeadata/fluxogram.png
-# Bibliotecas
-import ipeadatapy as ipea
-import rpy2.robjects as robjects
-from rpy2.robjects import pandas2ri
-import pandas as pd
-
-ipea.list_series() # Obtenção de informações sobre as séries e IDs;
-ipea.themes() # Lista de temas para argumentos/filtros;
-ipea.sources() # Lista de fontes para argumentos/filtros;
-ipea.territories() # Lista de níveis geográficos para argumentos/filtros;
-ipea.describe() # Informações sobre os metadados da série;
-ipea.metadata() # Função de Busca com base em argumentos/colunas da série;
-ipea.timeseries() # Função (que também utiliza argumentos *plot()) aplicada em conjunto com o código da série para obter dia, mês e ano de cada observação, além do valor da série;
-
-'''
-Silver Steps
-Filtros de Municípios em Nível Geográfico;
-Remoção de Colunas sem uso;
-Remoção de Duplicidades;
-Conversoes de formato;
-Rotulação de Colunas.
-'''
-
-import ipeadatapy as ipea
-ipea.list_series('PIB Municipal - preços de mercado') # PIB_IBGE_5938_37
-ipea.list_series('Receita corrente - receita bruta - municipal') # RECORRM
-ipea.list_series('Índice de Desenvolvimento Humano Municipal') # ADH_IDHM * Obtido em pacote do R (Nao Ha valores municipais de IDH em 2010 na biblioteca ipeadatapy)
-ipea.list_series('População residente - total') # POPTOT
