@@ -1,6 +1,6 @@
 # Coleta e Tratamento de dados públicos do IPEA utilizando python: Refazendo o projeto de Artigo Científico de Graduação
 
-[![en-us](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/puffdapaz/pythonIPEA/blob/58a7074737df5de5b85b8b66311f1e299fbd77e6/README.en_us.md)
+[![en-us](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/puffdapaz/pythonIPEA/blob/1d359f22d3c8730b2a4a39280e0e486d8c279e71/README.en_us.md)
 
 ### [Artigo Integral](https://github.com/puffdapaz/TCC/blob/66a3e445755dc30225056ef4bb92fabd85f85d14/Impacto%20da%20receita%20tribut%C3%A1ria%20no%20desenvolvimento%20econ%C3%B4mico%20e%20social.%20um%20estudo%20nos%20munic%C3%ADpios%20brasileiros.pdf)
 
