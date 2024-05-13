@@ -23,26 +23,26 @@ The aim of the project is to learn and improve the use of python for data engine
 In addition to exploring good practices in python, the purpose is to apply concepts from Medallion Architecture, object-oriented programming and ETL, using public social data from Brazilian municipalities. This repository also has three versions of code that execute the same process, with improvement in sophistication at each version.
 
 ## The Code
-All three script versions execute the same process generating the same result.
+All three script versions execute the same process generating the same result.<br/>
 The first contains an initial approach to python, the second uses more of the tool's features, and the third intends to incorporate best practices in code construction.
 
 1. The workflow begins with directories creation, that emulate the Medallion architecture layers - Bronze, Silver and Gold - progressively increasing the structure and quality of the saved data.
 2. In this analysis, five data series are searched, already filtered by the year 2010\*, in the IPEAdata database (public database of the Institute of Applied Economic Research, a federal public foundation linked to the Ministry of Planning and Budget, in Brazil):
-     - Four of them come from python library ['ipeadatapy'](https://pypi.org/project/ipeadatapy/)
-         Three of the series lists available:
-             GDP;
-             Population; (It was sample filter criteria in the original project)
-             Current Revenue;
-         One from the list of territories:
-             Municipalities.
-     - One of them comes from the R package ['ipeadatar'](https://cran.r-project.org/web/packages/ipeadatar/index.html) because it is not available at municipal granularity in the python library.
-         IDHM.
-The obtained series are saved as DataFrame in their original/full structure in Bronze layer.
+     - Four of them come from python library ['ipeadatapy'](https://pypi.org/project/ipeadatapy/)<br/>
+         Three of the series lists available:<br/>
+             GDP;<br/>
+             Population; (It was sample filter criteria in the original project)<br/>
+             Current Revenue;<br/>
+         One from the list of territories:<br/>
+             Municipalities.<br/>
+     - One of them comes from the R package ['ipeadatar'](https://cran.r-project.org/web/packages/ipeadatar/index.html) because it is not available at municipal granularity in the python library.<br/>
+         IDHM.<br/>
+The obtained series are saved as DataFrame in their original/full structure in Bronze layer.<br/>
 \* The IDHM series has a date field conversion for 2010 year filtering, using a different fetch structure from the python library.
-3. The DataFrames go through a transformation process, filtering only occurrences by municipality, carrying out DataType conversions, renaming fields and removing unused fields and possible duplication of occurrences.
+3. The DataFrames go through a transformation process, filtering only occurrences by municipality, carrying out DataType conversions, renaming fields and removing unused fields and possible duplication of occurrences.<br/>
 The transformed DataFrames are saved in Silver layer.
-4. At this stage, data from previously treated variables are consolidated into a single Dataframe, gathering (through the Municipal Code established by [IBGE - Brazilian Institute of Geography and Statistics](https://servicodados.ibge.gov.br/api/docs/)) the names of the municipalities and other selected variables.
-Next, there is removal of occurrences that do not contain all variables, fields reordering, occurrences sort (by Municipal Codes, ascending) and a creation of a calculated 'Tax Burden' field composed by the ratio between municipal Current Revenues and GDP.
+4. At this stage, data from previously treated variables are consolidated into a single Dataframe, gathering (through the Municipal Code established by [IBGE - Brazilian Institute of Geography and Statistics](https://servicodados.ibge.gov.br/api/docs/)) the names of the municipalities and other selected variables.<br/>
+Next, there is removal of occurrences that do not contain all variables, fields reordering, occurrences sort (by Municipal Codes, ascending) and a creation of a calculated 'Tax Burden' field composed by the ratio between municipal Current Revenues and GDP.<br/>
 The DataFrame ready for analysis is saved at the Gold layer.
 
 ## Methods
