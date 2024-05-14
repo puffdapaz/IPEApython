@@ -7,7 +7,6 @@ from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 import logging
 from typing import List, Optional
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -190,11 +189,15 @@ class DataProcessor:
         print("Descriptive Statistics:\n", summary)
         summary.to_csv(os.path.join(self.descriptive_analysis_folder, 'descriptive_statistics.csv'))
 
+        # Plot histograms using the colorblind friendly "viridis" palette
+        sns.set_palette("viridis")
+
+        # Calculate the 95th percentile for each column
         pib_95th = merged_df['PIB 2010 (R$)'].quantile(0.95)
         receitas_95th = merged_df['Receitas Correntes 2010 (R$)'].quantile(0.95)
 
-        # Define a method to plot histograms
-        def plot_histogram(column, title, xlabel, percentile=None, filename=None):
+        # Function to plot histogram with optional percentile adjustment and save as PDF
+        def plot_chart(column, title, xlabel, percentile=None, filename=None):
             if percentile is not None:
                 data = merged_df[merged_df[column] <= percentile][column]
             else:
@@ -204,28 +207,31 @@ class DataProcessor:
             plt.title(title)
             plt.xlabel(xlabel)
             plt.ylabel('Frequency')
-            plt.savefig(os.path.join(self.descriptive_analysis_folder, f'{filename}.pdf'), bbox_inches='tight')
-            plt.show()
+            plt.savefig(os.path.join(self.descriptive_analysis_folder, f'{filename}.pdf'))
             plt.close()
 
-        # Plot histograms for each variable and save as PDF
-        plot_histogram('IDHM 2010', 'Distribution of IDHM 2010', 'IDHM 2010', filename='Histogram IDHM 2010')
-        plot_histogram('Carga Tributária Municipal 2010', 'Distribution of Carga Tributária Municipal 2010', 'Carga Tributária Municipal 2010', filename='Histogram Carga Tributaria Municipal 2010')
-        plot_histogram('PIB 2010 (R$)', 'Distribution of PIB 2010 (R$) - Adjusted for Outliers', 'PIB 2010 (R$)', pib_95th, filename='Histogram PIB 2010 adjusted')
-        plot_histogram('Receitas Correntes 2010 (R$)', 'Distribution of Receitas Correntes 2010 (R$) - Adjusted for Outliers', 'Receitas Correntes 2010 (R$)', receitas_95th, filename='Histogram Receitas Correntes 2010 adjusted')
+        # Assuming 'merged_df' is your DataFrame containing the data
+        sns.set_theme(style="whitegrid")  # Set the style of the plot
+        plt.figure(figsize=(10, 6))  # Set the size of the plot
 
-        # Create a scatter plot with a trendline
-        plt.figure(figsize=(10, 6))
-        sns.lmplot(x='Carga Tributária Municipal 2010', y='IDHM 2010', data=merged_df, scatter_kws={"alpha": 0.7}, line_kws={"color": "red"})
-        plt.title('Scatter Plot of IDHM 2010 vs Carga Tributária Municipal 2010 with Trendline')
+        # Create the scatter plot
+        sns.scatterplot(data=merged_df, x='Carga Tributária Municipal 2010', y='IDHM 2010')
+
+        plt.title('Scatter Plot of IDHM 2010 vs Carga Tributária Municipal 2010')
         plt.xlabel('Carga Tributária Municipal 2010')
         plt.ylabel('IDHM 2010')
-        plt.savefig(os.path.join(self.descriptive_analysis_folder, 'Scatter Plot IDHM vs Carga Tributaria with Trendline.pdf'), bbox_inches='tight')
-        plt.show()
-        plt.close()
+       # Save the scatter plot as a PDF in the descriptive analysis folder
+        plt.savefig(os.path.join(self.descriptive_analysis_folder, 'Dispersao IDHM x Carga Tributaria.pdf'))
 
-        # Save the final DataFrame
-        self.saving_step(merged_df, self.gold_folder, filename)
+        # Plot histograms for each variable and save as PDF
+        plot_chart('IDHM 2010', 'Distribution of IDHM 2010', 'IDHM 2010', filename='Histogram IDHM 2010')
+        plot_chart('Carga Tributária Municipal 2010', 'Distribution of Carga Tributária Municipal 2010', 'Carga Tributária Municipal 2010', filename='Histogram Carga Tributaria Municipal 2010')
+        plot_chart('PIB 2010 (R$)', 'Distribution of PIB 2010 (R$) - Adjusted for Outliers', 'PIB 2010 (R$)', pib_95th, filename='Histogram PIB 2010 adjusted')
+        plot_chart('Receitas Correntes 2010 (R$)', 'Distribution of Receitas Correntes 2010 (R$) - Adjusted for Outliers', 'Receitas Correntes 2010 (R$)', receitas_95th, filename='Histogram Receitas Correntes 2010 adjusted')
+
+        self.saving_step(merged_df
+                       , self.gold_folder
+                       , filename)
         return merged_df
 
     def process_data(self
