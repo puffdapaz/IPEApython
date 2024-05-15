@@ -15,7 +15,11 @@ import seaborn as sns
 logging.basicConfig(level=logging.ERROR)
 
 class DataProcessor:
-    def __init__(self, bronze_folder: str, silver_folder: str, gold_folder: str, descriptive_analysis_folder: str):
+    def __init__(self
+               , bronze_folder: str
+               , silver_folder: str
+               , gold_folder: str
+               , descriptive_analysis_folder: str):
         self.bronze_folder = bronze_folder
         self.silver_folder = silver_folder
         self.gold_folder = gold_folder
@@ -23,7 +27,10 @@ class DataProcessor:
         self.join_list = []
 
     def create_folders(self) -> None:
-        folders = [self.bronze_folder, self.silver_folder, self.gold_folder, self.descriptive_analysis_folder]
+        folders = [self.bronze_folder
+                 , self.silver_folder
+                 , self.gold_folder
+                 , self.descriptive_analysis_folder]
         for folder in folders:
             os.makedirs(folder, exist_ok=True)
 
@@ -161,7 +168,7 @@ class DataProcessor:
 
     Args:
         df (DataFrame): DataFrame from Series ID fetched at IPEA.
-        filename (str): Filename to save the data fetched.
+        filename (str): Filename to save the data processed.
 
     Returns:
         DataFrame: Processed data as a single pandas DataFrame, then saving at Gold layer, or None if an error occurs.
@@ -185,47 +192,94 @@ class DataProcessor:
                             , inplace=True)
         merged_df['Carga Tributária Municipal 2010'] = merged_df['Receitas Correntes 2010 (R$)'].div(merged_df['PIB 2010 (R$)'], fill_value=0).astype(float)
 
-        # Perform descriptive analysis
+        # Perform and save descriptive statistics analysis
         summary = merged_df.describe()
         print("Descriptive Statistics:\n", summary)
-        summary.to_csv(os.path.join(self.descriptive_analysis_folder, 'descriptive_statistics.csv'))
+        summary.to_csv(os.path.join(self.descriptive_analysis_folder
+                                  , 'Descriptive Statistics Initial Analysis.csv'))
 
         pib_95th = merged_df['PIB 2010 (R$)'].quantile(0.95)
         receitas_95th = merged_df['Receitas Correntes 2010 (R$)'].quantile(0.95)
 
-        # Define a method to plot histograms
-        def plot_histogram(column, title, xlabel, percentile=None, filename=None):
+        def plot_histogram(column: str
+                         , title: str
+                         , xlabel: str
+                         , percentile = None
+                         , filename = None):
+            """
+            Plot Histograms (Frequency Distribution Charts) from CleanData variables; 
+            Also saved in .pdf at descriptive_analysis folder.
+
+        Args:
+            column (str): Selected field/variable from CleanData.
+            title (str): Title to be presented at the chart.
+            xlabel (str): X axis label.
+            percentile (None): Conditional trigger to adjust plot data for outliers.
+            filename (None): Filename to save the plotted chart.
+
+        Returns:
+            Object: Plotted histograms for every selected variable, then saving at descriptive_analysis folder.
+            """
             if percentile is not None:
                 data = merged_df[merged_df[column] <= percentile][column]
             else:
                 data = merged_df[column]
             plt.figure(figsize=(10, 6))
-            sns.histplot(data, bins=100, kde=True)
+            sns.color_palette('viridis')
+            sns.set_style('whitegrid')
+            sns.histplot(data
+                       , bins=100
+                       , kde=True)
             plt.title(title)
             plt.xlabel(xlabel)
             plt.ylabel('Frequency')
-            plt.savefig(os.path.join(self.descriptive_analysis_folder, f'{filename}.pdf'), bbox_inches='tight')
+            plt.savefig(os.path.join(self.descriptive_analysis_folder
+                                   , f'{filename}.pdf')
+                                   , bbox_inches='tight')
             plt.show()
             plt.close()
 
-        # Plot histograms for each variable and save as PDF
-        plot_histogram('IDHM 2010', 'Distribution of IDHM 2010', 'IDHM 2010', filename='Histogram IDHM 2010')
-        plot_histogram('Carga Tributária Municipal 2010', 'Distribution of Carga Tributária Municipal 2010', 'Carga Tributária Municipal 2010', filename='Histogram Carga Tributaria Municipal 2010')
-        plot_histogram('PIB 2010 (R$)', 'Distribution of PIB 2010 (R$) - Adjusted for Outliers', 'PIB 2010 (R$)', pib_95th, filename='Histogram PIB 2010 adjusted')
-        plot_histogram('Receitas Correntes 2010 (R$)', 'Distribution of Receitas Correntes 2010 (R$) - Adjusted for Outliers', 'Receitas Correntes 2010 (R$)', receitas_95th, filename='Histogram Receitas Correntes 2010 adjusted')
+        plot_histogram('IDHM 2010'
+                     , 'Distribution of IDHM 2010'
+                     , 'IDHM 2010'
+                     , filename='Histogram IDHM 2010')
+        plot_histogram('Carga Tributária Municipal 2010'
+                     , 'Distribution of Carga Tributária Mun. 2010'
+                     , 'Carga Tributária Mun. 2010'
+                     , filename='Histogram Carga Tributaria Mun. 2010')
+        plot_histogram('PIB 2010 (R$)'
+                     , 'Distribution of PIB 2010 (R$) - Adjusted for Outliers'
+                     , 'PIB 2010 (R$)'
+                     , pib_95th
+                     , filename='Histogram PIB 2010 adjusted')
+        plot_histogram('Receitas Correntes 2010 (R$)'
+                     , 'Distribution of Receitas Correntes 2010 (R$) - Adjusted for Outliers'
+                     , 'Receitas Correntes 2010 (R$)'
+                     , receitas_95th
+                     , filename='Histogram Receitas Correntes 2010 adjusted')
 
-        # Create a scatter plot with a trendline
-        plt.figure(figsize=(10, 6))
-        sns.lmplot(x='Carga Tributária Municipal 2010', y='IDHM 2010', data=merged_df, scatter_kws={"alpha": 0.7}, line_kws={"color": "red"})
-        plt.title('Scatter Plot of IDHM 2010 vs Carga Tributária Municipal 2010 with Trendline')
-        plt.xlabel('Carga Tributária Municipal 2010')
+        # Create a scatter plot (IDHM vs Carga Tributária Mun.) with a trendline
+        plt.figure(figsize=(10, 5))
+        sns.color_palette('viridis')
+        sns.set_style('whitegrid')
+        sns.lmplot(x='Carga Tributária Municipal 2010'
+                 , y='IDHM 2010'
+                 , data=merged_df
+                 , scatter_kws={"alpha": 0.7}
+                 , line_kws={"color": "red"})
+        plt.title('ScatterPlot - IDHM vs Carga Tributária Mun. (2010)')
+        plt.xlabel('Carga Tributária Mun. 2010')
         plt.ylabel('IDHM 2010')
-        plt.savefig(os.path.join(self.descriptive_analysis_folder, 'Scatter Plot IDHM vs Carga Tributaria with Trendline.pdf'), bbox_inches='tight')
+        plt.savefig(os.path.join(self.descriptive_analysis_folder
+                               , 'ScatterPlot IDHM vs Carga Tributaria.pdf')
+                               , bbox_inches='tight')
         plt.show()
         plt.close()
 
         # Save the final DataFrame
-        self.saving_step(merged_df, self.gold_folder, filename)
+        self.saving_step(merged_df
+                       , self.gold_folder
+                       , filename)
         return merged_df
 
     def process_data(self
@@ -260,19 +314,22 @@ class DataProcessor:
 
 def main():
     config = {
-        'bronze': os.getenv('BRONZE_FOLDER', 'bronze'),
-        'silver': os.getenv('SILVER_FOLDER', 'silver'),
-        'gold': os.getenv('GOLD_FOLDER', 'gold'),
-        'descriptive_analysis': os.getenv('DESCRIPTIVE_ANALYSIS_FOLDER', 'descriptive_analysis')
+        'bronze': os.getenv('BRONZE_FOLDER', 'Bronze')
+      , 'silver': os.getenv('SILVER_FOLDER', 'Silver')
+      , 'gold': os.getenv('GOLD_FOLDER', 'Gold')
+      , 'descriptive_analysis': os.getenv('DESCRIPTIVE_ANALYSIS_FOLDER', 'Descriptive Analysis')
     }
-    processor = DataProcessor(config['bronze'], config['silver'], config['gold'], config['descriptive_analysis'])
+    processor = DataProcessor(config['bronze']
+                            , config['silver']
+                            , config['gold']
+                            , config['descriptive_analysis'])
     processor.create_folders()
 
     data_series = [
-        ('PIB_IBGE_5938_37', 2010, 'PIB_2010.csv'),
-        ('RECORRM', 2010, 'Arrecadação_2010.csv'),
-        ('POPTOT', 2010, 'População_2010.csv'),
-        ('Municípios', None, 'Municípios.csv')
+        ('PIB_IBGE_5938_37', 2010, 'PIB_2010.csv')
+      , ('RECORRM', 2010, 'Arrecadação_2010.csv')
+      , ('POPTOT', 2010, 'População_2010.csv')
+      , ('Municípios', None, 'Municípios.csv')
     ]
     for series, year, filename in data_series:
         processor.process_data(series

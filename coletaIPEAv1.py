@@ -5,13 +5,16 @@ from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 import os as os
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-bronze = 'bronze'
-silver = 'silver'
-gold = 'gold'
+bronze = 'Bronze'
+silver = 'Silver'
+gold = 'Gold'
+descriptive_analysis_folder = 'Descriptive Analysis'
 
 # Creating folders (if don't exist)
-for folder in [bronze, silver, gold]:
+for folder in [bronze, silver, gold, descriptive_analysis_folder]:
     os.makedirs(folder, exist_ok=True)
 
 data_PIB = ipea.timeseries(series = 'PIB_IBGE_5938_37', year = 2010)
@@ -154,12 +157,92 @@ df_Complete = df_Variables.merge(silver_Municípios,
                                    )
 
 df_Complete.dropna(inplace=True)
-df_Complete = df_Complete.reindex(columns=['CodMunIBGE', 'Município', 'Habitantes 2010', 'IDHM 2010', 'PIB 2010 (R$)', 'Receitas Correntes 2010 (R$)', 'Carga Tributária'])
+df_Complete = df_Complete.reindex(columns=['CodMunIBGE', 'Município', 'Habitantes 2010', 'IDHM 2010', 'PIB 2010 (R$)', 'Receitas Correntes 2010 (R$)', 'Carga Tributária Municipal 2010'])
 df_Complete.sort_values(by='CodMunIBGE', inplace=True)
-df_Complete['Carga Tributária'] = df_Complete['Receitas Correntes 2010 (R$)'] / df_Complete['PIB 2010 (R$)'].astype(float)
+df_Complete['Carga Tributária Municipal 2010'] = df_Complete['Receitas Correntes 2010 (R$)'] / df_Complete['PIB 2010 (R$)'].astype(float)
 
 namefile_clean_data = 'CleanData.csv'
 path_clean_data = os.path.join(gold, namefile_clean_data)
 df_Complete.to_csv(path_clean_data, index=False, encoding='utf-8')
 df_Complete
+
+
+summary = df_Complete.describe()
+print("Descriptive Statistics:\n", summary)
+namefile_summary = 'Descriptive Statistics Initial Analysis.csv'
+path_summary = os.path.join(descriptive_analysis_folder, namefile_summary)
+summary.to_csv(path_summary, index=True, encoding='utf-8')
+
+data = df_Complete['IDHM 2010']
+plt.figure(figsize=(10, 6))
+sns.color_palette(palette='viridis')
+sns.set_style('whitegrid')
+sns.histplot(data
+           , bins=100
+           , kde=True)
+plt.title('Distribution of IDHM 2010')
+plt.xlabel('IDHM 2010')
+plt.ylabel('Frequency')
+plt.savefig(os.path.join(descriptive_analysis_folder, 'Histogram IDHM 2010.pdf'), bbox_inches='tight')
+plt.show()
+plt.close()
+
+data = df_Complete['Carga Tributária Municipal 2010']
+plt.figure(figsize=(10, 6))
+sns.color_palette(palette='viridis')
+sns.set_style('whitegrid')
+sns.histplot(data
+           , bins=100
+           , kde=True)
+plt.title('Distribution of Carga Tributária Mun. 2010')
+plt.xlabel('Carga Tributária Mun. 2010')
+plt.ylabel('Frequency')
+plt.savefig(os.path.join(descriptive_analysis_folder, 'Histogram Carga Tributária Mun. 2010.pdf'), bbox_inches='tight')
+plt.show()
+plt.close()
+
+data95 = df_Complete['PIB 2010 (R$)'].quantile(0.95)
+data = df_Complete['PIB 2010 (R$)'] <= data95
+plt.figure(figsize=(10, 6))
+sns.color_palette(palette='viridis')
+sns.set_style('whitegrid')
+sns.histplot(data
+           , bins=100
+           , kde=True)
+plt.title('Distribution of PIB 2010 (R$) - Adjusted for Outliers')
+plt.xlabel('PIB 2010 (R$)')
+plt.ylabel('Frequency')
+plt.savefig(os.path.join(descriptive_analysis_folder, 'Histogram PIB 2010 adjusted.pdf'), bbox_inches='tight')
+plt.show()
+plt.close()
+
+data95 = df_Complete['Receitas Correntes 2010 (R$)'].quantile(0.95)
+data = df_Complete['PIB 2010 (R$)'] <= data95
+plt.figure(figsize=(10, 6))
+sns.color_palette(palette='viridis')
+sns.set_style('whitegrid')
+sns.histplot(data
+           , bins=100
+           , kde=True)
+plt.title('Distribution of Receitas Correntes 2010 (R$) - Adjusted for Outliers')
+plt.xlabel('Receitas Correntes 2010 (R$)')
+plt.ylabel('Frequency')
+plt.savefig(os.path.join(descriptive_analysis_folder, 'Histogram Receitas Correntes 2010 adjusted.pdf'), bbox_inches='tight')
+plt.show()
+plt.close()
+
+plt.figure(figsize=(10, 5))
+sns.color_palette(palette='viridis')
+sns.set_style('whitegrid')
+sns.lmplot(x='Carga Tributária Municipal 2010'
+         , y='IDHM 2010'
+         , data=df_Complete
+         , scatter_kws={"alpha": 0.7}
+         , line_kws={"color": "red"})
+plt.title('ScatterPlot - IDHM vs Carga Tributária Mun. (2010)')
+plt.xlabel('Carga Tributária Mun. 2010')
+plt.ylabel('IDHM 2010')
+plt.savefig(os.path.join(descriptive_analysis_folder, 'ScatterPlot IDHM vs Carga Tributaria.pdf'), bbox_inches='tight')
+plt.show()
+plt.close()
 # %%
