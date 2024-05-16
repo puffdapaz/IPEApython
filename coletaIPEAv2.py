@@ -8,6 +8,9 @@ from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 import logging
 from typing import List, Tuple, Optional, Dict, Callable
+from pandas.api.types import is_datetime64_any_dtype
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Set error capture logging
 logging.basicConfig(level=logging.ERROR)
@@ -66,12 +69,14 @@ def silver_transform(df: pd.DataFrame
     try:
         # Special transform for IDHM 2010 (IPEAdataR)
         if 'IDHM_2010.csv' in filename:
-            df = df.query('(uname == "Municipality") & (date == "2010-01-01")')  # Data filter
-            df = df.drop(columns=['code'
-                                , 'uname'
-                                , 'date'])
-            df = df.rename(columns={'tcode': 'CodMunIBGE'
-                                  , 'value': 'IDHM 2010'})
+            if 'date' in df.columns and is_datetime64_any_dtype(df['date']):
+                # Convert string to datetime object for comparison
+                date_filter = pd.to_datetime("2010-01-01")
+                df = df.query('(uname == "Municipality") & (date == @date_filter)')
+            else:
+                df = df.query('(uname == "Municipality") & (date == "2010-01-01")')
+            df = df.drop(columns=['code', 'uname', 'date'])
+            df = df.rename(columns={'tcode': 'CodMunIBGE', 'value': 'IDHM 2010'})
         elif filename == 'Municípios.csv':
             df = df.query('LEVEL == "Municípios"').drop(columns=['LEVEL'
                                                                , 'AREA'
@@ -98,7 +103,6 @@ def silver_transform(df: pd.DataFrame
                        .astype({'Habitantes 2010': int
                               , 'CodMunIBGE': str}
                               , errors='ignore')
-        
         # Save DataFrame as CSV file
         saving_step(df
                   , folder
@@ -111,7 +115,8 @@ def silver_transform(df: pd.DataFrame
 # Gold finish function to merge/join variables values into a single dataframe
 def gold_finish(silver_dataframes: List[pd.DataFrame]
             , folder: str
-            , filename: str) -> pd.DataFrame:
+            , filename: str
+            , config: dict) -> pd.DataFrame:
     merged_df = silver_dataframes[0]
     for df in silver_dataframes[1:]:
         df['CodMunIBGE'] = df['CodMunIBGE'].astype(str)
@@ -126,26 +131,76 @@ def gold_finish(silver_dataframes: List[pd.DataFrame]
                   , 'IDHM 2010'
                   , 'PIB 2010 (R$)'
                   , 'Receitas Correntes 2010 (R$)'
-                  , 'Carga Tributária']
+                  , 'Carga Tributária Municipal 2010']
     
     # Removing rows with NA fields
     merged_df.dropna(inplace=True)
-    
     # Reorder the columns
     merged_df = merged_df.reindex(columns=column_order)
-
     # Sorting rows
     merged_df.sort_values(by='CodMunIBGE'
                         , inplace=True)
-    
     # Creating new column
-    merged_df['Carga Tributária'] = merged_df['Receitas Correntes 2010 (R$)'] / merged_df['PIB 2010 (R$)'].astype(float)
+    merged_df['Carga Tributária Municipal 2010'] = merged_df['Receitas Correntes 2010 (R$)'] / merged_df['PIB 2010 (R$)'].astype(float)
 
     # Save DataFrame as CSV file
     saving_step(merged_df
               , folder
               , filename)
-    return merged_df
+
+    # Perform descriptive analysis
+    summary = merged_df.describe()
+    print("Descriptive Statistics:\n", summary)
+
+    # Save DataFrame as CSV file
+    summary.to_csv(os.path.join(config['descriptive_analysis']
+                              , 'Descriptive Statistics Initial Analysis.csv'))
+    
+    # Plot histograms using the colorblind friendly "viridis" palette
+    sns.set_palette("viridis")
+
+    # Function to plot histogram with optional percentile adjustment and save as PDF
+    def plot_chart(column, title, xlabel, percentile=None, filename=None):
+        if percentile is not None:
+            data = merged_df[merged_df[column] <= percentile][column]
+        else:
+            data = merged_df[column]
+        plt.figure(figsize=(10, 6))
+        sns.histplot(data, bins=100, kde=True)
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel('Frequency')
+        plt.savefig(os.path.join(config['descriptive_analysis'], f'{filename}.pdf'))
+        plt.show()
+        plt.close()
+
+    # Assuming 'merged_df' is your DataFrame containing the data
+    sns.set_theme(style="whitegrid")  # Set the style of the plot
+    plt.figure(figsize=(10, 6))  # Set the size of the plot
+
+    # Create the scatter plot
+    sns.lmplot(data=merged_df
+                  , x='Carga Tributária Municipal 2010'
+                  , y='IDHM 2010'
+                  , scatter_kws={"alpha": 0.7}
+                  , line_kws={"color": "red"})
+    plt.title('Scatter Plot of IDHM 2010 vs Carga Tributária Municipal 2010')
+    plt.xlabel('Carga Tributária Municipal 2010')
+    plt.ylabel('IDHM 2010')
+    # Save the scatter plot as a PDF in the descriptive analysis folder
+    plt.savefig(os.path.join(config['descriptive_analysis'], 'Dispersao IDHM x Carga Tributaria.pdf'))
+    plt.show()
+    plt.close()
+
+    # Calculate the 95th percentile for each column
+    pib_95th = merged_df['PIB 2010 (R$)'].quantile(0.95)
+    receitas_95th = merged_df['Receitas Correntes 2010 (R$)'].quantile(0.95)
+
+    # Plot histograms for each variable and save as PDF
+    plot_chart('IDHM 2010', 'Distribution of IDHM 2010', 'IDHM 2010', filename='Histogram IDHM 2010')
+    plot_chart('Carga Tributária Municipal 2010', 'Distribution of Carga Tributária Municipal 2010', 'Carga Tributária Municipal 2010', filename='Histogram Carga Tributaria Municipal 2010')
+    plot_chart('PIB 2010 (R$)', 'Distribution of PIB 2010 (R$) - Adjusted for Outliers', 'PIB 2010 (R$)', pib_95th, filename='Histogram PIB 2010 adjusted')
+    plot_chart('Receitas Correntes 2010 (R$)', 'Distribution of Receitas Correntes 2010 (R$) - Adjusted for Outliers', 'Receitas Correntes 2010 (R$)', receitas_95th, filename='Histogram Receitas Correntes 2010 adjusted')
 
 # CoreFunction Fetch, Transform and save Data the next tier folder
 join_list = []
@@ -172,13 +227,15 @@ def data_process(series: str
 def main():
     # Directories parameters config
     config = {
-        'bronze': os.getenv('BRONZE_FOLDER', 'bronze')
-    ,   'silver': os.getenv('SILVER_FOLDER', 'silver')
-    ,   'gold': os.getenv('GOLD_FOLDER', 'gold')
+        'bronze': os.getenv('BRONZE_FOLDER', 'Bronze')
+    ,   'silver': os.getenv('SILVER_FOLDER', 'Silver')
+    ,   'gold': os.getenv('GOLD_FOLDER', 'Gold')
+    ,   'descriptive_analysis': os.getenv('DESCRIPTIVE_ANALYSIS', 'Descriptive Analysis')
     }
     create_folders([config['bronze']
                   , config['silver']
-                  , config['gold']])
+                  , config['gold']
+                  , config['descriptive_analysis']])
 
     # Series parameters config
     data_series = [
@@ -214,7 +271,8 @@ def main():
     if join_list:
         clean_data = gold_finish(join_list
                                , config['gold']
-                               , 'CleanData.csv')
+                               , 'CleanData.csv'
+                               , config=config)
     clean_data
     
 # Execute
