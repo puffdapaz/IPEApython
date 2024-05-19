@@ -6,10 +6,12 @@ import rpy2.robjects as robjects
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 import logging
-from typing import List, Optional
-import numpy as np
+from typing import Optional
 import matplotlib.pyplot as plt
 import seaborn as sns
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from patsy.builtins import *
 
 # Set error capture logging
 logging.basicConfig(level=logging.ERROR)
@@ -19,18 +21,21 @@ class DataProcessor:
                , bronze_folder: str
                , silver_folder: str
                , gold_folder: str
-               , descriptive_analysis_folder: str):
+               , descriptive_analysis_folder: str
+               , model_folder: str):
         self.bronze_folder = bronze_folder
         self.silver_folder = silver_folder
         self.gold_folder = gold_folder
         self.descriptive_analysis_folder = descriptive_analysis_folder
+        self.model_folder = model_folder
         self.join_list = []
 
     def create_folders(self) -> None:
         folders = [self.bronze_folder
                  , self.silver_folder
                  , self.gold_folder
-                 , self.descriptive_analysis_folder]
+                 , self.descriptive_analysis_folder
+                 , self.model_folder]
         for folder in folders:
             os.makedirs(folder, exist_ok=True)
 
@@ -312,17 +317,89 @@ class DataProcessor:
             if silver_df is not None:
                 self.join_list.append(silver_df)
 
+    def analyze_data(self, df: pd.DataFrame) -> None:
+        # Correlation Matrix
+        corr_matrix = df[['IDHM 2010', 'Carga Tributária Municipal 2010', 'PIB 2010 (R$)']].corr(method='pearson')
+        print("Correlation Matrix:\n", corr_matrix)
+        corr_matrix_html = corr_matrix.to_html()
+
+        # Linear Regression Model
+        model = smf.ols(formula="Q('IDHM 2010') ~ Q('Carga Tributária Municipal 2010') + Q('PIB 2010 (R$)')", data=df).fit()
+        print(model.summary())
+        model_summary = model.summary().as_html()
+        #with open(os.path.join(self.model_folder, 'Model_Summary.html'), 'w') as f:
+            #f.write(model_summary)
+
+        # ANOVA
+        anova_table = sm.stats.anova_lm(model, typ=2)
+        print("ANOVA Table:\n", anova_table)
+        anova_html = anova_table.to_html()
+
+        # Assuming all data processing and analysis is done above this point
+
+        # Convert correlation matrix to HTML
+        corr_matrix_html = corr_matrix.to_html(classes='table table-striped text-center')
+
+        # Convert ANOVA table to HTML
+        anova_html = anova_table.to_html(classes='table table-striped text-center')
+
+        # Combine all HTML sections into one document
+        html_report = f"""
+<html>
+<head>
+    <title>Data Analysis Report</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+       .model-summary {{
+            margin: auto;
+            width: 80%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }}
+    </style>
+</head>
+<body>
+    <h1>Data Analysis Report</h1>
+    <section>
+        <h2>Correlation Matrix</h2>
+        {corr_matrix_html}
+    </section>
+    <section>
+        <h2>ANOVA Results</h2>
+        {anova_html}
+    </section>
+    <section>
+        <h2>Linear Regression Model Summary</h2>
+        <div class="model-summary">
+            {model_summary}
+        </div>
+    </section>
+</body>
+</html>
+"""
+
+        # Save the HTML report to a file
+        report_filename = os.path.join(self.model_folder, 'Analysis Report.html')
+        with open(report_filename, 'w') as f:
+            f.write(html_report)
+
+        print(f"Report saved to {report_filename}")
+
+        
 def main():
     config = {
         'bronze': os.getenv('BRONZE_FOLDER', 'Bronze')
       , 'silver': os.getenv('SILVER_FOLDER', 'Silver')
       , 'gold': os.getenv('GOLD_FOLDER', 'Gold')
       , 'descriptive_analysis': os.getenv('DESCRIPTIVE_ANALYSIS_FOLDER', 'Descriptive Analysis')
+      , 'model': os.getenv('MODEL_FOLDER', 'Model')
     }
     processor = DataProcessor(config['bronze']
                             , config['silver']
                             , config['gold']
-                            , config['descriptive_analysis'])
+                            , config['descriptive_analysis']
+                            , config['model'])
     processor.create_folders()
 
     data_series = [
@@ -351,6 +428,8 @@ def main():
         clean_data = processor.gold_finish('CleanData.csv')
         clean_data
 
+        # Analyze the data
+        processor.analyze_data(clean_data)
+
 if __name__ == "__main__":
     main()
-# %%
