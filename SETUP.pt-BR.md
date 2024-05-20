@@ -17,7 +17,7 @@ Ative o ambiente virtual: </br>
     No Windows: .\venv\Scripts\activate </br>
     No macOS/Linux: source venv/bin/activate </br>
 
-- Passo 3: **Instalar bibliotecas necessárias**
+- Passo 3: **Instalar bibliotecas necessárias** </br>
 Instale Pandas: pip install pandas==1.4.1 </br>
 Instale IpeaDataPy: pip install ipeadatapy==0.1.0 </br>
 Instale Rpy2: pip install rpy2==3.4.5 </br>
@@ -26,7 +26,7 @@ Instale Seaborn: pip install seaborn==0.11.2 </br>
 Instale StatsModels: pip install statsmodels==0.13.2 </br>
 Instale Patsy: pip install patsy==0.5.2 </br>
 
-- Passo 4: **Siga as instruções do script**
+- Passo 4: **Siga as instruções do script** </br>
 Entenda o script lendo-o com atenção. Execute o script digitando coletaIPEAv3.py no terminal. </br>
 
 Existem arquivos [README](https://github.com/puffdapaz/pythonIPEA/blob/main/README.pt-br.md) com suporte adicional. Não hesite em pedir ajuda. </br>
