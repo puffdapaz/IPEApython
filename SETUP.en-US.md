@@ -1,6 +1,6 @@
 # Setup Guide for Replicating the Project
 
-[![pt-br](https://img.shields.io/badge/lang-pt--br-green.svg)]()
+[![pt-br](https://img.shields.io/badge/lang-pt--br-green.svg)](https://github.com/puffdapaz/pythonIPEA/blob/main/SETUP.pt-BR.md)
 
 ### This guide provides step-by-step instructions for setting up the project environment and running the script.
 

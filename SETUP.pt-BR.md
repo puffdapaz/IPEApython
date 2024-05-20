@@ -1,6 +1,6 @@
 # Guia de Configuração para Replicar o Projeto
 
-[![en-us](https://img.shields.io/badge/lang-en--us-red.svg)]()
+[![en-us](https://img.shields.io/badge/lang-en--us-red.svg)](https://github.com/puffdapaz/pythonIPEA/blob/main/SETUP.en-US.md)
 
 ### Este guia fornece instruções passo a passo para configurar o ambiente do projeto e executar o script.
 
