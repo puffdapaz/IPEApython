@@ -29,4 +29,4 @@ Instale Patsy: pip install patsy==0.5.2 </br>
 - Passo 4: **Siga as instruções do script** </br>
 Entenda o script lendo-o com atenção. Execute o script digitando coletaIPEAv3.py no terminal. </br>
 
-Existem arquivos [README](https://github.com/puffdapaz/pythonIPEA/blob/main/README.pt-br.md) com suporte adicional. Não hesite em pedir ajuda. </br>
+Existem arquivos [README](https://github.com/puffdapaz/pythonIPEA/blob/main/README.pt-BR.md) com suporte adicional. Não hesite em pedir ajuda. </br>
