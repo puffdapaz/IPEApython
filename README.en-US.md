@@ -69,8 +69,7 @@ The extension of the study to more municipalities reinforced the results obtaine
 ><br/>
 >The capacity to execute public expenditure is clearly not satisfactory, given the immediate need for tax regulatory reform and distribution of this revenue by the government, valuing social justice and the effective provision of public services. The Fiscal Responsibility Brazilian Law [(LC 101/2000)](https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp101.htm) restricts public policy decisions, prioritizing macroeconomic balance over Social well-being"
 
-![scatterplot](https://github.com/puffdapaz/pythonIPEA/blob/main/scatterplot.png)
-![heatmap](https://github.com/puffdapaz/pythonIPEA/blob/main/heatmap.png)
+![scatterplot](https://github.com/puffdapaz/pythonIPEA/blob/main/scatterplot.png) ![heatmap](https://github.com/puffdapaz/pythonIPEA/blob/main/heatmap.png)
 
 The relationship between MHDI and tax burden is considered moderate and negative (-0.6). The HDI and GDP ratio with 0.12 shows that the relationship is weak and positive. <br/>
 The least squares model presented a R² of 0.368, that is, GDP and tax burden explain 36.8% of the HDI value of each municipality. <br/>

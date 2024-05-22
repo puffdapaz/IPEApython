@@ -69,8 +69,7 @@ A extensão do estudo a mais municípios reforçou os resultados obtidos na pesq
 ><br/>
 >A capacidade de executar os gastos públicos claramente não é satisfatória, dada a constatação de imediata necessidade de reforma normativa tributaria e de distribuição dessa receita pelo governo, prezando pela justiça social e efetiva prestação de serviços públicos. A Lei de Responsabilidade Fiscal [(LC 101/2000)](https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp101.htm) engessa as decisões de políticas públicas priorizando equilíbrio macroeconômico frente ao bem-estar social"
 
-![scatterplot](https://github.com/puffdapaz/pythonIPEA/blob/main/scatterplot.png)
-![heatmap](https://github.com/puffdapaz/pythonIPEA/blob/main/heatmap.png)
+![scatterplot](https://github.com/puffdapaz/pythonIPEA/blob/main/scatterplot.png) ![heatmap](https://github.com/puffdapaz/pythonIPEA/blob/main/heatmap.png)
 
 A relação entre IDH e Carga tributária é considerada moderada e negativa (-0,6). A relação IDH e PIB com 0,12 mostra que a relação é fraca e positiva. <br/>
 O modelo de mínimos quadrados apresentou R² de 0,368, ou seja, o PIB e a carga tributária explicam 36,8% do valor de IDH de cada município. <br/>
