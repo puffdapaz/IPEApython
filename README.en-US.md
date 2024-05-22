@@ -2,7 +2,7 @@
 
 [![pt-br](https://img.shields.io/badge/lang-pt--br-green.svg)](https://github.com/puffdapaz/pythonIPEA/blob/main/README.pt-BR.md)
 
-### [Full Article](https://github.com/puffdapaz/TCC/blob/66a3e445755dc30225056ef4bb92fabd85f85d14/Impacto%20da%20receita%20tribut%C3%A1ria%20no%20desenvolvimento%20econ%C3%B4mico%20e%20social.%20um%20estudo%20nos%20munic%C3%ADpios%20brasileiros.pdf)
+### [Full Article](https://github.com/puffdapaz/pythonIPEA/blob/main/Impacto%20da%20receita%20tributária%20no%20desenvolvimento%20econômico%20e%20social.%20um%20estudo%20nos%20municípios%20brasileiros.pdf)
 
 ## Impact of tax revenue on economic and social development: a study in Brazilian municipalities
 - Municipal Human Development Index 2010;
@@ -55,12 +55,23 @@ The descriptive summary is saved in csv format; the heatmap chart is saved in th
 
 ## Methods
 ### Correlation Matrix (Pearson)
-- *Variables: MHDI 2010, Tax Burden, GDP 2010;*<br/>
+- *Variables: MHDI 2010, Tax Burden, GDP 2010;*
 ### Ordinary Least Squares Regression (OLS)
 - *Predictors: (Constant), Tax Burden, Revenue 2010, GDP 2010;*<br/>
-- *Dependent Variable: MHDI 2010.*<br/>
+- *Dependent Variable: MHDI 2010.*
 ### Variance Analysis (ANOVA)
 - *Predictors: (Constant), Tax Burden, Revenue 2010, GDP 2010;*<br/>
-- *Dependent Variable: MHDI 2010.*<br/>
+- *Dependent Variable: MHDI 2010.*
 
 ## Results
+The extension of the study to more municipalities reinforced the results obtained in the original research in 2015. <br/>
+>"... in many cases there is resources availability to meet population needs, however, there is a lack of effectiveness in management of public expenditure, without showing proportional progress in social development indicators, just as, there are municipalities that have high indicators, without a large pool of resources.
+><br/>
+>The capacity to execute public expenditure is clearly not satisfactory, given the immediate need for tax regulatory reform and distribution of this revenue by the government, valuing social justice and the effective provision of public services. The Fiscal Responsibility Brazilian Law [(LC 101/2000)](https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp101.htm) restricts public policy decisions, prioritizing macroeconomic balance over Social well-being"
+
+![scatterplot](https://github.com/puffdapaz/pythonIPEA/blob/main/scatterplot.png)
+![heatmap](https://github.com/puffdapaz/pythonIPEA/blob/main/heatmap.png)
+
+The relationship between MHDI and tax burden is considered moderate and negative (-0.6). The HDI and GDP ratio with 0.12 shows that the relationship is weak and positive. <br/>
+The least squares model presented a R² of 0.368, that is, GDP and tax burden explain 36.8% of the HDI value of each municipality. <br/>
+The F test with a result of 1602 and significance of 0.00 allows us to infer that the model is significant at a 5% confidence level. The variables tax burden with -55.399 and GDP with 5.869 allow us to reject the null hypothesis; both with significance of 0.00. <br/>

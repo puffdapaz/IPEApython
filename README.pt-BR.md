@@ -2,7 +2,7 @@
 
 [![en-us](https://img.shields.io/badge/lang-en--us-red.svg)](https://github.com/puffdapaz/pythonIPEA/blob/main/README.en-US.md)
 
-### [Artigo Integral](https://github.com/puffdapaz/TCC/blob/66a3e445755dc30225056ef4bb92fabd85f85d14/Impacto%20da%20receita%20tribut%C3%A1ria%20no%20desenvolvimento%20econ%C3%B4mico%20e%20social.%20um%20estudo%20nos%20munic%C3%ADpios%20brasileiros.pdf)
+### [Artigo Integral](https://github.com/puffdapaz/pythonIPEA/blob/main/Impacto%20da%20receita%20tributária%20no%20desenvolvimento%20econômico%20e%20social.%20um%20estudo%20nos%20municípios%20brasileiros.pdf)
 
 ## Impacto da receita tributária no desenvolvimento econômico e social: um estudo nos municípios brasileiros
 - IDHM 2010;
@@ -55,24 +55,23 @@ O sumário descritivo é salvo em formato csv; o gráfico de mapa de calor é sa
 
 ## Métodos
 ### Matriz de Correlação (Pearson)
-- *Variáveis: IDHM 2010, Carga Tributária, PIB 2010;*<br/>
+- *Variáveis: IDHM 2010, Carga Tributária, PIB 2010;*
 ### Regressão por Mínimos Quadrados Ordinários (OLS)
 - *Preditoras: (Constante), Carga Tributária, Arrecadação 2010, PIB 2010;*<br/>
-- *Variável Dependente: IDHM 2010.*<br/>
+- *Variável Dependente: IDHM 2010.*
 ### Análise de Variância (ANOVA)
 - *Preditoras: (Constante), Carga Tributária, Arrecadação 2010, PIB 2010;*<br/>
-- *Variável Dependente: IDHM 2010.*<br/>
+- *Variável Dependente: IDHM 2010.*
 
 ## Resultados
-A extensão do estudo a mais municípios na amostra reforçou os resultados obtidos na pesquisa original em 2015. <br/>
+A extensão do estudo a mais municípios reforçou os resultados obtidos na pesquisa original em 2015. <br/>
 >"... em muitos casos há a disponibilidade de recursos para atender as necessidades da população, contudo, falta efetividade na gestão dos gastos públicos, sem mostrar avanço proporcional nos indicadores de desenvolvimento social, assim como existem municípios que possuem altos indicadores, sem serem grandes recebedores de recursos.
 ><br/>
 >A capacidade de executar os gastos públicos claramente não é satisfatória, dada a constatação de imediata necessidade de reforma normativa tributaria e de distribuição dessa receita pelo governo, prezando pela justiça social e efetiva prestação de serviços públicos. A Lei de Responsabilidade Fiscal [(LC 101/2000)](https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp101.htm) engessa as decisões de políticas públicas priorizando equilíbrio macroeconômico frente ao bem-estar social"
 
-![scatterplot]()
-![heatmap]()
+![scatterplot](https://github.com/puffdapaz/pythonIPEA/blob/main/scatterplot.png)
+![heatmap](https://github.com/puffdapaz/pythonIPEA/blob/main/heatmap.png)
 
 A relação entre IDH e Carga tributária é considerada moderada e negativa (-0,6). A relação IDH e PIB com 0,12 mostra que a relação é fraca e positiva. <br/>
 O modelo de mínimos quadrados apresentou R² de 0,368, ou seja, o PIB e a carga tributária explicam 36,8% do valor de IDH de cada município. <br/>
-O teste F com resultado de 1602 e significância de 0,00, permite inferir que o modelo é significativo a um grau de 5% de confiança. <br/>
-A variável carga tributária com -55,399 e a variável PIB com 5,869 permite rejeitar a hipótese nula. As duas variáveis com significância de 0,00 e 0,00, menores do que 0,05. <br/>
+O teste F com resultado de 1602 e significância de 0,00, permite inferir que o modelo é significativo a um grau de 5% de confiança. As variáveis carga tributária com -55,399 e PIB com 5,869 permitem rejeitar a hipótese nula; ambas com significância de 0,00. <br/>
