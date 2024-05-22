@@ -1,4 +1,3 @@
-#%%
 # Standard Library Imports
 import os
 import logging
@@ -457,4 +456,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-# %%
