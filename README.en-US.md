@@ -20,7 +20,7 @@
 ## The Project
 The aim of the project is to learn and improve the use of python for data engineering, analysis and science through a research carried out on 2015 in a scientific article, as a reference.
 
-In addition to exploring good practices in python, the purpose is to apply concepts from Medallion Architecture, object-oriented programming and ETL, using public social data from Brazilian municipalities. This repository also has two versions of code that execute the same process, with improvement in sophistication at the last version.
+In addition to explore good practices in python, the purpose is to apply concepts from Medallion Architecture, object-oriented programming and ETL, using public social data from Brazilian municipalities. This repository also has two versions of code that execute the same process, with improvement in sophistication at the last version.
 
 ## The Code
 All script versions execute the same process generating the same result.<br/>

@@ -1,3 +1,4 @@
+#%%
 # Standard Library Imports
 import os
 import logging
@@ -124,42 +125,47 @@ class DataProcessor:
         DataFrame: Processed data as pandas DataFrame, then saving at Silver layer, or None if an error occurs (with an error log).
         """
         try:
-            transformations = {
-                'IDHM_2010.csv': lambda x: x.query('(uname == "Municipality") & (date == @pd.to_datetime("2010-01-01"))')
-                                            .drop(columns = ['code'
-                                                           , 'uname'
-                                                           , 'date']) \
-                                            .rename(columns = {'tcode': 'CodMunIBGE'
-                                                             , 'value': 'IDHM 2010'})
-              , 'Municípios.csv': lambda x: x.query('LEVEL == "Municípios"') \
-                                             .drop(columns = ['LEVEL'
-                                                            , 'AREA'
-                                                            , 'CAPITAL']) \
-                                             .rename(columns = {'NAME': 'Município'
-                                                              , 'ID': 'CodMunIBGE'})
-              , 'PIB_2010.csv': lambda x: x.assign(VALUE=(x['VALUE (R$ (mil), a preços do ano 2010)'].astype(float) * 1000).round(3)) \
-                                           .query('NIVNOME == "Municípios"') \
-                                           .drop(columns = ['CODE'
-                                                          , 'RAW DATE'
-                                                          , 'YEAR'
-                                                          , 'NIVNOME']) \
-                                           .rename(columns={'TERCODIGO': 'CodMunIBGE'
-                                                          , 'VALUE (R$ (mil), a preços do ano 2010)': 'PIB 2010 (R$)'}) \
-              , 'Arrecadação_2010.csv': lambda x: x.assign(VALUE=x['VALUE (R$)'].astype(float).round(2)) \
-                                                 .rename(columns={'TERCODIGO': 'CodMunIBGE'
-                                                                , 'VALUE (R$)': 'Receitas Correntes 2010 (R$)'}).drop(columns=['CODE', 'RAW DATE', 'YEAR', 'NIVNOME'])
-              , 'População_2010.csv': lambda x: x.drop(columns=['CODE'
-                                                              , 'RAW DATE'
-                                                              , 'YEAR'
-                                                              , 'NIVNOME']) \
-                                                 .rename(columns={'TERCODIGO': 'CodMunIBGE'
-                                                                , 'VALUE (Habitante)': 'Habitantes 2010'}) \
-                                                 .astype({'Habitantes 2010': int
-                                                        , 'CodMunIBGE': str}
-                                                        , errors='ignore')}
-            transformation_func = transformations.get(filename)
-            if transformation_func:
-                df = transformation_func(df)
+            if 'IDHM_2010.csv' in filename:
+                date_filter = pd.to_datetime("2010-01-01")
+                df = df.query('(uname == "Municipality") & (date == @date_filter)') \
+                        .drop(columns = ['code'
+                                    , 'uname'
+                                    , 'date'])
+                df = df.rename(columns = {'tcode': 'CodMunIBGE'
+                                        , 'value': 'IDHM 2010'})
+            elif filename == 'Municípios.csv':
+                df = df.query('LEVEL == "Municípios"') \
+                        .drop(columns = ['LEVEL'
+                                    , 'AREA'
+                                    , 'CAPITAL']) \
+                        .rename(columns = {'NAME': 'Município'
+                                        , 'ID': 'CodMunIBGE'})
+            else:
+                df = df.query('NIVNOME == "Municípios"') \
+                        .drop(columns = ['CODE'
+                                    , 'RAW DATE'
+                                    , 'YEAR'
+                                    , 'NIVNOME'])
+                if 'PIB_2010.csv' in filename:
+                    df['VALUE (R$ (mil), a preços do ano 2010)'] = df['VALUE (R$ (mil), a preços do ano 2010)'].astype(float) * 1000
+                    df['VALUE (R$ (mil), a preços do ano 2010)'] = df['VALUE (R$ (mil), a preços do ano 2010)'].round(3)
+                    df = df.rename(columns = {'TERCODIGO': 'CodMunIBGE'
+                                            , 'VALUE (R$ (mil), a preços do ano 2010)': 'PIB 2010 (R$)'})
+                    df['PIB 2010 (R$)'] = pd.to_numeric(df['PIB 2010 (R$)']
+                                                        , errors = 'coerce')
+                elif 'Arrecadação_2010.csv' in filename:
+                    df['VALUE (R$)'] = df['VALUE (R$)'].astype(float) \
+                                                        .round(2)
+                    df = df.rename(columns = {'TERCODIGO': 'CodMunIBGE'
+                                            , 'VALUE (R$)': 'Receitas Correntes 2010 (R$)'})
+                    df['Receitas Correntes 2010 (R$)'] = pd.to_numeric(df['Receitas Correntes 2010 (R$)']
+                                                                        , errors = 'coerce')
+                elif 'População_2010.csv' in filename:
+                    df = df.rename(columns = {'TERCODIGO': 'CodMunIBGE'
+                                            , 'VALUE (Habitante)': 'Habitantes 2010'})
+                    df = df.astype({'Habitantes 2010': int
+                                    , 'CodMunIBGE': str}
+                                    , errors = 'ignore')
 
             self.saving_step(df
                            , self.silver_folder
@@ -168,7 +174,6 @@ class DataProcessor:
         except Exception as e:
             logging.error(f"Error transforming data for {filename}: {e}")
             return None
-
 
     def gold_finish(self
                   , filename: str) -> pd.DataFrame:
@@ -456,3 +461,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# %%
