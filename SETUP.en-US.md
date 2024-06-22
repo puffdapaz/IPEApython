@@ -33,7 +33,4 @@ Follow the installation instructions for your operating system. <br/>
 - Step 5: **Install Required R Packages**<br/>
 Install IpeaDataR: install.packages("ipeadatar") <br/>
 
-- Step 6: **Follow the Script Instructions**<br/>
-Understand the script by reading through it carefully. Execute the script by typing coletaIPEAv3.py in the terminal. <br/>
-
 There is [README](https://github.com/puffdapaz/pythonIPEA/blob/main/README.en-US.md) files with additional support. Don't hesitate to ask for assistance. <br/>

@@ -1,0 +1,153 @@
+
+    <html>
+    <head>
+        <title>Data Analysis Report</title>
+        <link rel = 'stylesheet' href = 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+        <style>
+        .model-summary {
+                margin : auto;
+                width : 80%;
+                padding : 20px;
+                border : 1px solid #ccc;
+                background-color : #f9f9f9;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Data Analysis Report</h1>
+        <section>
+            <h2>Correlation Matrix</h2>
+            <table border="1" class="dataframe table table-striped text-center">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>IDHM 2010</th>
+      <th>Carga Tributária Municipal 2010</th>
+      <th>PIB 2010 (R$)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>IDHM 2010</th>
+      <td>1.000000</td>
+      <td>-0.570461</td>
+      <td>0.127950</td>
+    </tr>
+    <tr>
+      <th>Carga Tributária Municipal 2010</th>
+      <td>-0.570461</td>
+      <td>1.000000</td>
+      <td>-0.101769</td>
+    </tr>
+    <tr>
+      <th>PIB 2010 (R$)</th>
+      <td>0.127950</td>
+      <td>-0.101769</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+        </section>
+        <section>
+            <h2>ANOVA Results</h2>
+            <table border="1" class="dataframe table table-striped text-center">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sum_sq</th>
+      <th>df</th>
+      <th>F</th>
+      <th>PR(&gt;F)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Q('Carga Tributária Municipal 2010')</th>
+      <td>9.054845</td>
+      <td>1.0</td>
+      <td>2607.479937</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>Q('PIB 2010 (R$)')</th>
+      <td>0.142217</td>
+      <td>1.0</td>
+      <td>40.953581</td>
+      <td>1.686460e-10</td>
+    </tr>
+    <tr>
+      <th>Residual</th>
+      <td>19.311364</td>
+      <td>5561.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+        </section>
+        <section>
+            <h2>Linear Regression Model Summary</h2>
+            <div class = 'model-summary'>
+                <table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>     <td>Q('IDHM 2010')</td>  <th>  R-squared:         </th>  <td>   0.330</td> 
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th>  <td>   0.330</td> 
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th>  <td>   1372.</td> 
+</tr>
+<tr>
+  <th>Date:</th>             <td>sáb, 22 jun 2024</td> <th>  Prob (F-statistic):</th>   <td>  0.00</td>  
+</tr>
+<tr>
+  <th>Time:</th>                 <td>10:31:11</td>     <th>  Log-Likelihood:    </th>  <td>  7860.5</td> 
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>  5564</td>      <th>  AIC:               </th> <td>-1.572e+04</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>  5561</td>      <th>  BIC:               </th> <td>-1.570e+04</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     2</td>      <th>                     </th>      <td> </td>    
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>      <td> </td>    
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+                    <td></td>                      <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>Intercept</th>                            <td>    0.7295</td> <td>    0.002</td> <td>  454.623</td> <td> 0.000</td> <td>    0.726</td> <td>    0.733</td>
+</tr>
+<tr>
+  <th>Q('Carga Tributária Municipal 2010')</th> <td>   -0.3287</td> <td>    0.006</td> <td>  -51.063</td> <td> 0.000</td> <td>   -0.341</td> <td>   -0.316</td>
+</tr>
+<tr>
+  <th>Q('PIB 2010 (R$)')</th>                   <td> 6.871e-13</td> <td> 1.07e-13</td> <td>    6.399</td> <td> 0.000</td> <td> 4.77e-13</td> <td> 8.98e-13</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>54.263</td> <th>  Durbin-Watson:     </th> <td>   0.985</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.000</td> <th>  Jarque-Bera (JB):  </th> <td>  56.748</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td>-0.224</td> <th>  Prob(JB):          </th> <td>4.76e-13</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.209</td> <th>  Cond. No.          </th> <td>6.20e+10</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.<br/>[2] The condition number is large, 6.2e+10. This might indicate that there are<br/>strong multicollinearity or other numerical problems.
+            </div>
+        </section>
+    </body>
+    </html>
+    
