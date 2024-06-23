@@ -2,7 +2,7 @@
 
 [![en-us](https://img.shields.io/badge/lang-en--us-red.svg)](https://github.com/puffdapaz/pythonIPEA/blob/main/README.en-US.md)
 
-[![App](https://img.shields.io/badge/Streamlit-FF4B4B.svg?style=for-the-badge&logo=Streamlit&logoColor=white)]()
+[![App](https://img.shields.io/badge/Streamlit-FF4B4B.svg?style=for-the-badge&logo=Streamlit&logoColor=white)](https://ipeapython.streamlit.app)
 
 ### [Artigo Integral](https://github.com/puffdapaz/pythonIPEA/blob/main/Impacto%20da%20receita%20tributária%20no%20desenvolvimento%20econômico%20e%20social.%20um%20estudo%20nos%20municípios%20brasileiros.pdf)
 
@@ -25,7 +25,7 @@ O intuito do projeto é aprender e aperfeiçoar a utilização de python para en
 Além de explorar boas práticas em python, o propósito é de aplicar conceitos de Arquitetura Medallion, programação orientada a objetos e ETL, utilizando dados públicos sociais dos municípios brasileiros.
 
 ## O Código
-Com o objetivo de incorporar as melhores práticas quanto à utilização da ferramenta e construção de código, uma abordagem inicial foi adotada e mantida para registro [IPEAv1.py](), mas foi modificada com incremento de sofisticação e visualização de dados.
+Com o objetivo de incorporar as melhores práticas quanto à utilização da ferramenta e construção de código, uma abordagem inicial foi adotada e mantida para registro [IPEAv1.py](https://github.com/puffdapaz/pythonIPEA/blob/main/IPEAv1.py), mas foi modificada com incremento de sofisticação e visualização de dados.
 
 1. O fluxo inicia com a criação de diretórios que emulam as camadas de arquitetura Medallion - Bronze, Silver e Gold - incrementando progressivamente a estrutura e qualidade dos dados salvos, e uma pasta adicional para as análises e resultados.
 2. Neste projeto cinco séries de dados são buscadas, já filtradas pelo ano de 2010, na base de dados do IPEAdata (base pública de dados do Instituto de Pesquisa Econômica Aplicada, fundação pública federal vinculada ao Ministério do Planejamento e Orçamento, do Brasil):

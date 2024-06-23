@@ -17,8 +17,14 @@ def main():
     st.title("IPEA python")
 
     #Get current directory and fetch the object
-    diagram = os.path.join(os.getcwd(), "pages", "ProjectDiagram.jpg")
-    st.image(diagram)
+    # diagram = os.path.join(os.getcwd(), "pages", "ProjectDiagram.jpg")
+    # st.image(diagram)
+    
+    miro_iframe = """
+    <iframe width="768" height="432" src="https://miro.com/app/embed/uXjVOvi97iA=/?pres=1&frameId=3458764592909428823&embedId=794216144639" 
+    frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
+    """
+    st.markdown(miro_iframe, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

@@ -2,7 +2,7 @@
 
 [![pt-br](https://img.shields.io/badge/lang-pt--br-green.svg)](https://github.com/puffdapaz/pythonIPEA/blob/main/README.pt-BR.md)
 
-[![App](https://img.shields.io/badge/Streamlit-FF4B4B.svg?style=for-the-badge&logo=Streamlit&logoColor=white)]()
+[![App](https://img.shields.io/badge/Streamlit-FF4B4B.svg?style=for-the-badge&logo=Streamlit&logoColor=white)](https://ipeapython.streamlit.app)
 
 ### [Full Article](https://github.com/puffdapaz/pythonIPEA/blob/main/Impacto%20da%20receita%20tributária%20no%20desenvolvimento%20econômico%20e%20social.%20um%20estudo%20nos%20municípios%20brasileiros.pdf)
 
@@ -25,7 +25,7 @@ The aim of the project is to learn and improve the use of python for data engine
 In addition to explore good practices in python, the purpose is to apply concepts from Medallion Architecture, object-oriented programming and ETL, using public social data from Brazilian municipalities.
 
 ## The Code
-With the intends to incorporate usage of tool's features and best practices in code construction, an initial approach was taken and kept for record [IPEAv1.py](), but was modified with improvement in sophistication and data visualization.
+With the intends to incorporate usage of tool's features and best practices in code construction, an initial approach was taken and kept for record [IPEAv1.py](https://github.com/puffdapaz/pythonIPEA/blob/main/IPEAv1.py), but was modified with improvement in sophistication and data visualization.
 
 1. The workflow begins with directories creation, that emulate the Medallion architecture layers - Bronze, Silver and Gold - progressively increasing the structure and quality of the saved data, and an additional folder to the results and analysis.
 2. In this project, five data series are searched, already filtered by the year 2010\*, in the IPEAdata database (public database of the Institute of Applied Economic Research, a federal public foundation linked to the Ministry of Planning and Budget, in Brazil):

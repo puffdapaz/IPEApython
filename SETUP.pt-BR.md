@@ -18,13 +18,19 @@ Ative o ambiente virtual: <br/>
     No macOS/Linux: source venv/bin/activate <br/>
 
 - Passo 3: **Instalar bibliotecas necessárias**<br/>
-Instale Pandas: pip install pandas==1.4.1 <br/>
-Instale IpeaDataPy: pip install ipeadatapy==0.1.0 <br/>
-Instale Rpy2: pip install rpy2==3.4.5 <br/>
-Instale Matplotlib: pip install matplotlib==3.5.1 <br/>
-Instale Seaborn: pip install seaborn==0.11.2 <br/>
-Instale StatsModels: pip install statsmodels==0.13.2 <br/>
-Instale Patsy: pip install patsy==0.5.2 <br/>
+pip install:<br/>
+pandas<br/>
+ipeadatapy<br/>
+rpy2<br/>
+statsmodels<br/>
+duckdb<br/>
+geobr<br/>
+geopandas<br/>
+plotly<br/>
+folium<br/>
+streamlit<br/>
+streamlit-folium<br/>
+patsy<br/>
 
 - Passo 4: **Instalar Software R**<br/>
 Baixe a última versão do R no site oficial: https://cran.r-project.org/ <br/>
