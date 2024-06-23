@@ -1,4 +1,3 @@
-#%%
 import os
 import logging
 import pandas as pd
@@ -469,4 +468,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# %%
