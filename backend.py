@@ -13,9 +13,6 @@ import numpy as np
 import duckdb as ddb
 import geobr
 import geopandas as gpd
-import plotly.express as px
-import folium
-from folium.plugins import StripePattern
 
 logging.basicConfig(level = logging.INFO
                   , format = '%(asctime)s - %(levelname)s - %(message)s')
