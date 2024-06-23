@@ -1,5 +1,5 @@
 
-[![App](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)]()
+[![App](https://img.shields.io/badge/Streamlit-FF4B4B.svg?style=for-the-badge&logo=Streamlit&logoColor=white)](https://ipeapython.streamlit.app)
 
 # README files
 
