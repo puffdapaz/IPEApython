@@ -1,7 +1,6 @@
 import os
 import logging
 import pandas as pd
-#from patsy.builtins import *
 import numpy as np
 import geopandas as gpd
 import plotly.express as px
