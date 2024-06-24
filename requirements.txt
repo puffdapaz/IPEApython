@@ -1,3 +1,5 @@
+rpy2==3.5.16
+streamlit
 duckdb==1.0.0
 folium==0.17.0
 geobr==0.2.1
@@ -8,7 +10,6 @@ numpy==1.23.2
 pandas==2.2.2
 patsy==0.5.6
 plotly==5.22.0
-#rpy2==3.5.16
 seaborn==0.13.2
 statsmodels==0.14.2
 streamlit_folium==0.20.1
