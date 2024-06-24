@@ -3,7 +3,6 @@ folium==0.17.0
 geobr==0.2.1
 geopandas==0.14.4
 ipeadatapy==0.1.9
-matplotlib==3.8.0
 numpy==2.0.0
 pandas==2.2.2
 patsy==0.5.6
