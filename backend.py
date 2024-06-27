@@ -13,6 +13,7 @@ import numpy as np
 import duckdb as ddb
 import geobr
 import geopandas as gpd
+import time
 
 logging.basicConfig(level = logging.INFO
                   , format = '%(asctime)s - %(levelname)s - %(message)s')
@@ -33,6 +34,7 @@ class DataProcessor:
 
     def create_folders(self) -> None:
         """Create required folders as layer directories."""
+        start_time = time.time()
         folders = [self.bronze_folder
                  , self.silver_folder
                  , self.gold_folder
@@ -40,6 +42,8 @@ class DataProcessor:
         for folder in folders:
             os.makedirs(folder
                       , exist_ok = True)
+        elapsed_time = time.time() - start_time  # End timing
+        logging.info(f"Created folders in {elapsed_time:.2f} seconds")
 
     def saving_step(self
                   , df : pd.DataFrame
@@ -56,10 +60,13 @@ class DataProcessor:
         Returns:
             File: Saved file at layer directory.
         """
+        start_time = time.time()
         path = os.path.join(folder
                           , filename)
         df.to_parquet(path
                     , engine = 'pyarrow')
+        elapsed_time = time.time() - start_time
+        logging.info(f"Saved file {filename} in {elapsed_time:.2f} seconds")
 
     def bronze_fetch(self
                    , series : str
@@ -78,6 +85,7 @@ class DataProcessor:
         Returns:
             DataFrame: Fetched data as pandas DataFrame, then saving at Bronze layer, or None if an error occurs (with an error log).
         """
+        start_time = time.time()
         try:
             # Special handling for IDHM 2010 (IPEAdataR)
             if filename == 'IDHM_2010.parquet':
@@ -101,6 +109,8 @@ class DataProcessor:
             self.saving_step(raw_data
                            , self.bronze_folder
                            , filename)
+            elapsed_time = time.time() - start_time
+            logging.info(f"Bronze fetching {filename} in {elapsed_time:.2f} seconds")
             return raw_data
         except Exception as e:
             logging.error(f'Error fetching data for {filename}: {e}')
@@ -119,6 +129,7 @@ class DataProcessor:
         Returns:
             DataFrame: Processed data as pandas DataFrame, then saving at Silver layer, or None if an error occurs (with an error log).
         """
+        start_time = time.time()
         try:
             if 'IDHM_2010.parquet' in filename:
                 date_filter = pd.to_datetime('2010-01-01')
@@ -164,6 +175,8 @@ class DataProcessor:
             self.saving_step(transf_df
                            , self.silver_folder
                            , filename)
+            elapsed_time = time.time() - start_time
+            logging.info(f"Silver transforming {filename} in {elapsed_time:.2f} seconds")
             return transf_df
         except Exception as e:
             logging.error(f'Error transforming data for {filename}: {e}')
@@ -180,6 +193,7 @@ class DataProcessor:
         Returns:
             DataFrame: Processed data as a single pandas DataFrame, then saving at Gold layer and DuckDB, or None if an error occurs. Also, Descriptive Summary as a csv file, then saving at Statistical Analysis folder, or None if an error occurs.
         """
+        start_time = time.time()
         try:
             df = self.join_list[0]
             for transf_df in self.join_list[1:]:
@@ -219,7 +233,8 @@ class DataProcessor:
             conn = ddb.connect(self.db_path)
             conn.execute('CREATE TABLE IF NOT EXISTS df AS SELECT * FROM df')
             conn.close()
-
+            elapsed_time = time.time() - start_time
+            logging.info(f"Gold finishing {filename} in {elapsed_time:.2f} seconds")
             return df
         except Exception as e:
             logging.error(f'Error finalizing data for {filename}: {e}')
@@ -244,6 +259,7 @@ class DataProcessor:
             if bronze_fetch is done, and silver_transform isn't, do silver_transform,\n
             if silver_transform is done, prepare pandas DataFrame to be processed at gold_finish.
         """
+        start_time = time.time()
         bronze_df = self.bronze_fetch(series
                                     , year
                                     , filename
@@ -253,6 +269,8 @@ class DataProcessor:
                                             , filename)
             if silver_df is not None:
                 self.join_list.append(silver_df)
+        elapsed_time = time.time() - start_time
+        logging.info(f"Processing data {filename} in {elapsed_time:.2f} seconds")
 
     def analyze_data(self
                    , df : pd.DataFrame) -> None:
@@ -266,6 +284,7 @@ class DataProcessor:
             Statistical Model calculations and conversion to HTML.\n
             Correlation Matrix, Linear Regression and ANOVA, all saved in a single HTML file at Statistical Analysis folder.
         """
+        start_time = time.time()
         try:
             corr_matrix = df[['IDHM 2010'
                             , 'Carga Tributária Municipal 2010'
@@ -328,14 +347,19 @@ class DataProcessor:
             with open(report_filename
                     , 'w') as f:
                 f.write(html_report)
+            elapsed_time = time.time() - start_time
+            logging.info(f"Analyzing data {report_filename} in {elapsed_time:.2f} seconds")
         except Exception as e:
             logging.error(f'Error analyzing data: {e}')
 
 class Database:
     def __init__(self):
         """Create connection to DuckDB database."""
+        start_time = time.time()
         self._install_extensions()
         self.conn = ddb.connect('ipea.db')
+        elapsed_time = time.time() - start_time
+        logging.info(f"Initialized database in {elapsed_time:.2f} seconds")
 
     def _install_extensions(self):
         """Install extensions to DuckDB database."""
@@ -358,10 +382,13 @@ class DataFetcher:
         Returns:
             DataFrame: The finished pandas DataFrame.
         """
+        start_time = time.time()
         try:
             conn = ddb.connect(self.db_path)
             df = conn.execute('SELECT * FROM df').fetchdf()
-            conn.close()  
+            conn.close()
+            elapsed_time = time.time() - start_time
+            logging.info(f"Fetched data in {elapsed_time:.2f} seconds")
             return df
         except Exception as e:
             logging.error(f'Error loading data from DuckDB: {e}')
@@ -374,11 +401,14 @@ class DataFetcher:
         Returns:
             GeoDataFrame: The finished GeoDataFrame.
         """
+        start_time = time.time()
         try:
             gdf = geobr.read_municipality(code_muni = 'all'
                                         , year = 2010)
             gdf = gpd.GeoDataFrame(gdf).drop(columns = ['name_muni'
                                                       , 'code_state']).rename(columns = {'abbrev_state' : 'UF'})
+            elapsed_time = time.time() - start_time
+            logging.info(f"Fetched geodata in {elapsed_time:.2f} seconds")
             return gdf
         except Exception as e:
             logging.error(f'Error fetching geodata: {e}')
@@ -399,15 +429,24 @@ class DataMerger:
         Returns:
             GeoDataFrame: A GeoDataFrame containing the selected IPEA data.
         """
+        start_time = time.time()
         data.loc[:, 'CodMunIBGE'] = data['CodMunIBGE'].astype(int)
         geodata['code_muni'] = geodata['code_muni'].astype(int)
         geodata = geodata.rename(columns = {'code_muni' : 'CodMunIBGE'})
         app_data = data.merge(geodata
                             , how = 'left'
                             , on = 'CodMunIBGE')
-        app_data = gpd.GeoDataFrame(app_data, geometry='geometry')
-        file_path = os.path.join(gold_folder, 'AppData.parquet')
-        app_data.to_parquet(file_path, index=None, compression='snappy', schema_version=None)
+        app_data = gpd.GeoDataFrame(app_data
+                                  , geometry = 'geometry')
+        app_data['geometry'] = app_data.geometry.simplify(tolerance = 0.01)
+        file_path = os.path.join(gold_folder
+                               , 'AppData.parquet')
+        app_data.to_parquet(file_path
+                          , index = None
+                          , compression = 'snappy'
+                          , schema_version = None)
+        elapsed_time = time.time() - start_time
+        logging.info(f"Merged data in {elapsed_time:.2f} seconds")
         return gpd.GeoDataFrame(app_data)
 
 def main():
@@ -437,9 +476,12 @@ def main():
                  , ('Municípios', None, 'Municípios.parquet')]
     
     for series, year, filename in data_series:
+        start_time = time.time()
         processor.process_data(series
                              , year
                              , filename)
+        elapsed_time = time.time() - start_time
+        logging.info(f"Processed data for {filename} in {elapsed_time:.2f} seconds")
 
     r_code = """
     install.packages('ipeadatar', repos = 'http://cran.r-project.org')
